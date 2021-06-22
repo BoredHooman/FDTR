@@ -46,10 +46,10 @@ public class DTR {
 	private JLabel lblClock;
 	private JLabel fullName;
 	private JTextField name;
-	private JLabel department;
-	private JTextField departmentField;
+	private JLabel departmentLbl;
+	private JTextField department;
 	private JLabel headOfDepartment;
-	private JTextField headOfDepartmenttextField;
+	private JTextField department_head;
 	private JLabel lblMonth;
 	private JDateChooser dateChooser;
 	private JTable table;
@@ -173,17 +173,17 @@ public class DTR {
 		frame.getContentPane().add(name);
 
 		
-		department = new JLabel("Department: ");
-		department.setForeground(new Color(0, 51, 51));
-		department.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		department.setBounds(10, 189, 90, 15);
-		frame.getContentPane().add(department);
+		departmentLbl = new JLabel("Department: ");
+		departmentLbl.setForeground(new Color(0, 51, 51));
+		departmentLbl.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		departmentLbl.setBounds(10, 189, 90, 15);
+		frame.getContentPane().add(departmentLbl);
 		
-		departmentField = new JTextField();
-		departmentField.setBackground(new Color(255, 245, 238));
-		departmentField.setColumns(10);
-		departmentField.setBounds(10, 214, 238, 27);
-		frame.getContentPane().add(departmentField);
+		department = new JTextField();
+		department.setBackground(new Color(255, 245, 238));
+		department.setColumns(10);
+		department.setBounds(10, 214, 238, 27);
+		frame.getContentPane().add(department);
 		
 		headOfDepartment = new JLabel("Head of \r\ndepartment: ");
 		headOfDepartment.setForeground(new Color(0, 51, 51));
@@ -191,11 +191,11 @@ public class DTR {
 		headOfDepartment.setBounds(10, 250, 145, 15);
 		frame.getContentPane().add(headOfDepartment);
 		
-		headOfDepartmenttextField = new JTextField();
-		headOfDepartmenttextField.setBackground(new Color(255, 245, 238));
-		headOfDepartmenttextField.setColumns(10);
-		headOfDepartmenttextField.setBounds(10, 278, 238, 27);
-		frame.getContentPane().add(headOfDepartmenttextField);
+		department_head = new JTextField();
+		department_head.setBackground(new Color(255, 245, 238));
+		department_head.setColumns(10);
+		department_head.setBounds(10, 278, 238, 27);
+		frame.getContentPane().add(department_head);
 		
 		JDateChooser dateChooser_1 = new JDateChooser();
 		dateChooser_1.setBounds(10, 342, 238, 27);
@@ -218,13 +218,13 @@ public class DTR {
 				
 				String selectedValue = comboBox.getSelectedItem().toString();
 
-				if(name.getText().trim().isEmpty() || departmentField.getText().equals("") || 
-						sdf.format(dateChooser_1.getDate()).equals(null) || headOfDepartmenttextField.getText().equals("")) {
+				if(name.getText().trim().isEmpty() || department.getText().equals("") || 
+						sdf.format(dateChooser_1.getDate()).equals(null) || department_head.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Please enter all data!");
 					// clear all text fields
 					name.setText("");
-					departmentField.setText("");
-					headOfDepartmenttextField.setText("");
+					department.setText("");
+					department_head.setText("");
 					dateChooser_1.setDate(new Date());
 				}
 				
@@ -233,8 +233,8 @@ public class DTR {
 				
 				// clear all text fields
 				name.setText("");
-				departmentField.setText("");
-				headOfDepartmenttextField.setText("");
+				department.setText("");
+				department_head.setText("");
 				dateChooser_1.setDate(new Date());
 				
 				// insert inputed data to the table
@@ -245,7 +245,7 @@ public class DTR {
 				model.addRow(row);
 			}
 		});
-		btnNewButton.setBounds(664, 466, 74, 74);
+		btnNewButton.setBounds(638, 455, 74, 74);
 		Image img = new ImageIcon(this.getClass().getResource("Finger-Print-icon.png")).getImage();
 		btnNewButton.setIcon(new ImageIcon(img));
 		frame.getContentPane().add(btnNewButton);
@@ -299,7 +299,7 @@ public class DTR {
 		JScrollPane pane = new JScrollPane(table);
 		pane.setForeground(Color.RED);
 		pane.setBackground(Color.WHITE);
-		pane.setBounds(268,163,616,280);
+		pane.setBounds(258,86,616,280);
 		frame.getContentPane().add(pane);
 		
 		lblTimelbl = new JLabel("Time");
@@ -372,7 +372,7 @@ public class DTR {
 			}
 		});
 		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(761, 466, 64, 74);
+		btnGeneratePdf.setBounds(722, 455, 64, 74);
 		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
 		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
 		frame.getContentPane().add(btnGeneratePdf);
@@ -402,9 +402,12 @@ public class DTR {
 		
 		Connection con = connect();
 		try{
-			String query = "insert into employee (name) values(?)";
+			String query = "insert into employee (name, department, department_head) values(?,?,?)";
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setString(1, name.getText());
+			ps.setString(2, department.getText());
+			ps.setString(3, department_head.getText());
+
 			ps.execute();
 
 		}catch(Exception err) {
