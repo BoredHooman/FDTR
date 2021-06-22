@@ -20,6 +20,9 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuItem;
@@ -42,7 +45,7 @@ public class DTR {
 	private JFrame frame;
 	private JLabel lblClock;
 	private JLabel fullName;
-	private JTextField nameField;
+	private JTextField name;
 	private JLabel department;
 	private JTextField departmentField;
 	private JLabel headOfDepartment;
@@ -163,11 +166,11 @@ public class DTR {
 		fullName.setBounds(10, 128, 80, 15);
 		frame.getContentPane().add(fullName);
 		
-		nameField = new JTextField();
-		nameField.setBackground(new Color(255, 245, 238));
-		nameField.setBounds(10, 153, 238, 27);
-		nameField.setColumns(10);
-		frame.getContentPane().add(nameField);
+		name = new JTextField();
+		name.setBackground(new Color(255, 245, 238));
+		name.setBounds(10, 153, 238, 27);
+		name.setColumns(10);
+		frame.getContentPane().add(name);
 
 		
 		department = new JLabel("Department: ");
@@ -210,14 +213,16 @@ public class DTR {
 		//Time in and insert other information.
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			
+				save();
 				
 				String selectedValue = comboBox.getSelectedItem().toString();
 
-				if(nameField.getText().trim().isEmpty() || departmentField.getText().equals("") || 
+				if(name.getText().trim().isEmpty() || departmentField.getText().equals("") || 
 						sdf.format(dateChooser_1.getDate()).equals(null) || headOfDepartmenttextField.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Please enter all data!");
 					// clear all text fields
-					nameField.setText("");
+					name.setText("");
 					departmentField.setText("");
 					headOfDepartmenttextField.setText("");
 					dateChooser_1.setDate(new Date());
@@ -227,7 +232,7 @@ public class DTR {
 				lblClock.getText();
 				
 				// clear all text fields
-				nameField.setText("");
+				name.setText("");
 				departmentField.setText("");
 				headOfDepartmenttextField.setText("");
 				dateChooser_1.setDate(new Date());
@@ -240,7 +245,7 @@ public class DTR {
 				model.addRow(row);
 			}
 		});
-		btnNewButton.setBounds(268, 379, 74, 74);
+		btnNewButton.setBounds(664, 466, 74, 74);
 		Image img = new ImageIcon(this.getClass().getResource("Finger-Print-icon.png")).getImage();
 		btnNewButton.setIcon(new ImageIcon(img));
 		frame.getContentPane().add(btnNewButton);
@@ -294,7 +299,7 @@ public class DTR {
 		JScrollPane pane = new JScrollPane(table);
 		pane.setForeground(Color.RED);
 		pane.setBackground(Color.WHITE);
-		pane.setBounds(258,86,616,280);
+		pane.setBounds(268,163,616,280);
 		frame.getContentPane().add(pane);
 		
 		lblTimelbl = new JLabel("Time");
@@ -367,7 +372,7 @@ public class DTR {
 			}
 		});
 		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(810, 379, 64, 74);
+		btnGeneratePdf.setBounds(761, 466, 64, 74);
 		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
 		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
 		frame.getContentPane().add(btnGeneratePdf);
@@ -377,6 +382,35 @@ public class DTR {
 		Image imgEmployee = new ImageIcon(this.getClass().getResource("administrator-icon.png")).getImage();
 		employeeIcon.setIcon(new ImageIcon(imgEmployee));
 		frame.getContentPane().add(employeeIcon);
+		
+	}
+	
+	
+	static Connection connect() {
+		try {
+			String driver = "com.mysql.cj.jdbc.Driver";
+			String url = "jdbc:mysql://localhost/fdtr";
+			Class.forName(driver);
+			return DriverManager.getConnection(url, "root", "");
+		}catch(Exception e) {
+			System.out.print("Couldn't connect: " + e);
+		}
+		return null;
+	}
+	
+	public void save() {
+		
+		Connection con = connect();
+		try{
+			String query = "insert into employee (name) values(?)";
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, name.getText());
+			ps.execute();
+
+		}catch(Exception err) {
+			System.out.print("error : " + err);
+		}
+		
 		
 	}
 }
