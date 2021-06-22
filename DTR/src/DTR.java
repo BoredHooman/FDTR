@@ -39,6 +39,7 @@ import com.toedter.calendar.JYearChooser;
 import com.toedter.calendar.JDayChooser;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 
 public class DTR {
@@ -53,13 +54,20 @@ public class DTR {
 	private JLabel lblMonth;
 	private JDateChooser dateChooser;
 	private JTable table;
-	private JComboBox comboBox;
+	private JComboBox types;
 	private String[] type = {"Class", "Consultation", "Relative Activities", "Others"};
+	private JComboBox days;
+	private String[] day = {"Monday", "Tuesday", "Wednessday", "Thursday", "Friday"};
 	private JLabel lblTimelbl;
 	private JLabel lblDate;
 	private JLabel lblDate_1;
 	private JButton btnGeneratePdf;
 	private JLabel employeeIcon;
+	private JTextArea time_in;
+	private JTextArea time_out;
+	private JLabel lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JDateChooser dateDays;
 
 	/**
 	 * Launch the application.
@@ -197,9 +205,9 @@ public class DTR {
 		department_head.setBounds(10, 278, 238, 27);
 		frame.getContentPane().add(department_head);
 		
-		JDateChooser dateChooser_1 = new JDateChooser();
-		dateChooser_1.setBounds(10, 342, 238, 27);
-		frame.getContentPane().add(dateChooser_1);
+		dateDays = new JDateChooser();
+		dateDays.setBounds(10, 329, 238, 27);
+		frame.getContentPane().add(dateDays);
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
 		JButton btnNewButton = new JButton("");
@@ -214,18 +222,18 @@ public class DTR {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			
-				save();
+				saveEmployeeDetails();
 				
-				String selectedValue = comboBox.getSelectedItem().toString();
+				String selectedValue = types.getSelectedItem().toString();
 
 				if(name.getText().trim().isEmpty() || department.getText().equals("") || 
-						sdf.format(dateChooser_1.getDate()).equals(null) || department_head.getText().equals("")) {
+						sdf.format(dateDays.getDate()).equals(null) || department_head.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Please enter all data!");
 					// clear all text fields
 					name.setText("");
 					department.setText("");
 					department_head.setText("");
-					dateChooser_1.setDate(new Date());
+					dateDays.setDate(new Date());
 				}
 				
 				// get Time In
@@ -235,17 +243,17 @@ public class DTR {
 				name.setText("");
 				department.setText("");
 				department_head.setText("");
-				dateChooser_1.setDate(new Date());
+				dateDays.setDate(new Date());
 				
 				// insert inputed data to the table
-				row[0] = sdf.format(dateChooser_1.getDate());
+				row[0] = sdf.format(dateDays.getDate());
 				row[1] = lblClock.getText();
 				row[2] = "Holiday"; 
 				row[3] = selectedValue;
 				model.addRow(row);
 			}
 		});
-		btnNewButton.setBounds(638, 455, 74, 74);
+		btnNewButton.setBounds(726, 455, 74, 74);
 		Image img = new ImageIcon(this.getClass().getResource("Finger-Print-icon.png")).getImage();
 		btnNewButton.setIcon(new ImageIcon(img));
 		frame.getContentPane().add(btnNewButton);
@@ -253,19 +261,19 @@ public class DTR {
 		lblMonth = new JLabel("Date: ");
 		lblMonth.setForeground(new Color(0, 51, 51));
 		lblMonth.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblMonth.setBounds(10, 316, 56, 15);
+		lblMonth.setBounds(12, 303, 56, 15);
 		frame.getContentPane().add(lblMonth);
 
 		// Type
-		comboBox = new JComboBox(type);
-		comboBox.setBackground(new Color(255, 245, 238));
-		comboBox.setBounds(10, 406, 238, 27);
-		frame.getContentPane().add(comboBox);
+		types = new JComboBox(type);
+		types.setBackground(new Color(255, 245, 238));
+		types.setBounds(513, 399, 238, 27);
+		frame.getContentPane().add(types);
 		
 		JLabel lblType = new JLabel("Type: ");
 		lblType.setForeground(new Color(0, 51, 51));
 		lblType.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblType.setBounds(10, 380, 56, 15);
+		lblType.setBounds(513, 373, 56, 15);
 		frame.getContentPane().add(lblType);
 		
 		//Time Out Button
@@ -372,7 +380,7 @@ public class DTR {
 			}
 		});
 		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(722, 455, 64, 74);
+		btnGeneratePdf.setBounds(810, 455, 64, 74);
 		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
 		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
 		frame.getContentPane().add(btnGeneratePdf);
@@ -382,6 +390,36 @@ public class DTR {
 		Image imgEmployee = new ImageIcon(this.getClass().getResource("administrator-icon.png")).getImage();
 		employeeIcon.setIcon(new ImageIcon(imgEmployee));
 		frame.getContentPane().add(employeeIcon);
+		
+		JButton time_in_btn = new JButton("Save");
+		time_in_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				schedule();
+			}
+		});
+		time_in_btn.setBounds(295, 506, 89, 23);
+		frame.getContentPane().add(time_in_btn);
+		
+		time_in = new JTextArea();
+		time_in.setBounds(236, 465, 90, 22);
+		frame.getContentPane().add(time_in);
+		
+		time_out = new JTextArea();
+		time_out.setBounds(352, 465, 90, 22);
+		frame.getContentPane().add(time_out);
+		
+		lblNewLabel_1 = new JLabel("Time In");
+		lblNewLabel_1.setBounds(255, 436, 46, 14);
+		frame.getContentPane().add(lblNewLabel_1);
+		
+		lblNewLabel_2 = new JLabel("Time Out");
+		lblNewLabel_2.setBounds(373, 436, 46, 14);
+		frame.getContentPane().add(lblNewLabel_2);
+		
+		days = new JComboBox(day);
+		days.setBackground(new Color(255, 245, 238));
+		days.setBounds(258, 399, 238, 27);
+		frame.getContentPane().add(days);
 		
 	}
 	
@@ -398,7 +436,7 @@ public class DTR {
 		return null;
 	}
 	
-	public void save() {
+	public void saveEmployeeDetails() {
 		
 		Connection con = connect();
 		try{
@@ -413,7 +451,24 @@ public class DTR {
 		}catch(Exception err) {
 			System.out.print("error : " + err);
 		}
+	}
+	
+	public void schedule() {
 		
-		
+		Connection con = connect();
+		try{
+			String query = "insert into daily_schedule (days, time_in, time_out, types) values(?,?,?,?)";
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, days.getSelectedItem().toString());
+			ps.setString(2, time_in.getText());
+			ps.setString(3, time_out.getText());
+			ps.setString(4, types.getSelectedItem().toString());
+
+
+			ps.execute();
+
+		}catch(Exception err) {
+			System.out.print("error : " + err);
+		}
 	}
 }
