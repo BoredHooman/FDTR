@@ -51,13 +51,12 @@ public class DTR {
 	private JTextField department;
 	private JLabel headOfDepartment;
 	private JTextField department_head;
-	private JLabel lblMonth;
 	private JDateChooser dateChooser;
 	private JTable table;
 	private JComboBox types;
 	private String[] type = {"Class", "Consultation", "Relative Activities", "Others"};
 	private JComboBox days;
-	private String[] day = {"Monday", "Tuesday", "Wednessday", "Thursday", "Friday"};
+	private String[] day = {"Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday", "Sunday"};
 	private JLabel lblTimelbl;
 	private JLabel lblDate;
 	private JLabel lblDate_1;
@@ -65,9 +64,10 @@ public class DTR {
 	private JLabel employeeIcon;
 	private JTextArea time_in;
 	private JTextArea time_out;
-	private JLabel lblNewLabel_1;
-	private JLabel lblNewLabel_2;
 	private JDateChooser dateDays;
+	private JTextField id_number;
+	private JLabel lblMonth;
+	private JLabel lblYear;
 
 	/**
 	 * Launch the application.
@@ -171,12 +171,12 @@ public class DTR {
 		fullName = new JLabel("Full Name: ");
 		fullName.setForeground(new Color(0, 51, 51));
 		fullName.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		fullName.setBounds(10, 128, 80, 15);
+		fullName.setBounds(232, 120, 80, 15);
 		frame.getContentPane().add(fullName);
 		
 		name = new JTextField();
 		name.setBackground(new Color(255, 245, 238));
-		name.setBounds(10, 153, 238, 27);
+		name.setBounds(232, 145, 206, 27);
 		name.setColumns(10);
 		frame.getContentPane().add(name);
 
@@ -184,30 +184,31 @@ public class DTR {
 		departmentLbl = new JLabel("Department: ");
 		departmentLbl.setForeground(new Color(0, 51, 51));
 		departmentLbl.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		departmentLbl.setBounds(10, 189, 90, 15);
+		departmentLbl.setBounds(10, 184, 90, 15);
 		frame.getContentPane().add(departmentLbl);
 		
 		department = new JTextField();
 		department.setBackground(new Color(255, 245, 238));
 		department.setColumns(10);
-		department.setBounds(10, 214, 238, 27);
+		department.setBounds(10, 209, 206, 27);
 		frame.getContentPane().add(department);
 		
 		headOfDepartment = new JLabel("Head of \r\ndepartment: ");
 		headOfDepartment.setForeground(new Color(0, 51, 51));
 		headOfDepartment.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		headOfDepartment.setBounds(10, 250, 145, 15);
+		headOfDepartment.setBounds(232, 183, 145, 15);
 		frame.getContentPane().add(headOfDepartment);
 		
 		department_head = new JTextField();
 		department_head.setBackground(new Color(255, 245, 238));
 		department_head.setColumns(10);
-		department_head.setBounds(10, 278, 238, 27);
+		department_head.setBounds(232, 209, 206, 27);
 		frame.getContentPane().add(department_head);
 		
-		dateDays = new JDateChooser();
-		dateDays.setBounds(10, 329, 238, 27);
-		frame.getContentPane().add(dateDays);
+//		date picker
+//		dateDays = new JDateChooser();
+//		dateDays.setBounds(287, 396, 238, 27);
+//		frame.getContentPane().add(dateDays);
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
 		JButton btnNewButton = new JButton("");
@@ -233,7 +234,7 @@ public class DTR {
 					name.setText("");
 					department.setText("");
 					department_head.setText("");
-					dateDays.setDate(new Date());
+					dateDays.validate();
 				}
 				
 				// get Time In
@@ -253,42 +254,23 @@ public class DTR {
 				model.addRow(row);
 			}
 		});
-		btnNewButton.setBounds(726, 455, 74, 74);
+		btnNewButton.setBounds(567, 447, 74, 74);
 		Image img = new ImageIcon(this.getClass().getResource("Finger-Print-icon.png")).getImage();
 		btnNewButton.setIcon(new ImageIcon(img));
 		frame.getContentPane().add(btnNewButton);
-		
-		lblMonth = new JLabel("Date: ");
-		lblMonth.setForeground(new Color(0, 51, 51));
-		lblMonth.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblMonth.setBounds(12, 303, 56, 15);
-		frame.getContentPane().add(lblMonth);
 
 		// Type
 		types = new JComboBox(type);
 		types.setBackground(new Color(255, 245, 238));
-		types.setBounds(513, 399, 238, 27);
+		types.setBounds(585, 208, 122, 28);
 		frame.getContentPane().add(types);
 		
 		JLabel lblType = new JLabel("Type: ");
 		lblType.setForeground(new Color(0, 51, 51));
 		lblType.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblType.setBounds(513, 373, 56, 15);
+		lblType.setBounds(624, 184, 56, 15);
 		frame.getContentPane().add(lblType);
-		
-		//Time Out Button
-//		JButton btnTimeOut = new JButton("Time Out");
-//		btnTimeOut.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				row[2] = lblClock.getText();
-//				model.addRow(row);
-//			}
-//		});
-//		btnTimeOut.setBounds(785, 470, 89, 32);
-//		frame.getContentPane().add(btnTimeOut);
-		
 
-		//Table
 		JTable table  = new JTable();
 		
 		Object[]  columns = {"Day", "Time In", "Time Out", "Type"};
@@ -307,7 +289,7 @@ public class DTR {
 		JScrollPane pane = new JScrollPane(table);
 		pane.setForeground(Color.RED);
 		pane.setBackground(Color.WHITE);
-		pane.setBounds(258,86,616,280);
+		pane.setBounds(10,247,434,280);
 		frame.getContentPane().add(pane);
 		
 		lblTimelbl = new JLabel("Time");
@@ -380,7 +362,7 @@ public class DTR {
 			}
 		});
 		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(810, 455, 64, 74);
+		btnGeneratePdf.setBounds(471, 456, 64, 65);
 		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
 		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
 		frame.getContentPane().add(btnGeneratePdf);
@@ -391,35 +373,91 @@ public class DTR {
 		employeeIcon.setIcon(new ImageIcon(imgEmployee));
 		frame.getContentPane().add(employeeIcon);
 		
-		JButton time_in_btn = new JButton("Save");
+		JButton time_in_btn = new JButton("Add you schedule");
 		time_in_btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				schedule();
 			}
 		});
-		time_in_btn.setBounds(295, 506, 89, 23);
+		time_in_btn.setBounds(454, 320, 170, 32);
 		frame.getContentPane().add(time_in_btn);
 		
 		time_in = new JTextArea();
-		time_in.setBounds(236, 465, 90, 22);
+		time_in.setBounds(454, 281, 80, 27);
 		frame.getContentPane().add(time_in);
 		
 		time_out = new JTextArea();
-		time_out.setBounds(352, 465, 90, 22);
+		time_out.setBounds(544, 282, 80, 27);
 		frame.getContentPane().add(time_out);
-		
-		lblNewLabel_1 = new JLabel("Time In");
-		lblNewLabel_1.setBounds(255, 436, 46, 14);
-		frame.getContentPane().add(lblNewLabel_1);
-		
-		lblNewLabel_2 = new JLabel("Time Out");
-		lblNewLabel_2.setBounds(373, 436, 46, 14);
-		frame.getContentPane().add(lblNewLabel_2);
 		
 		days = new JComboBox(day);
 		days.setBackground(new Color(255, 245, 238));
-		days.setBounds(258, 399, 238, 27);
+		days.setBounds(453, 208, 113, 27);
 		frame.getContentPane().add(days);
+		
+		id_number = new JTextField();
+		id_number.setColumns(10);
+		id_number.setBackground(new Color(255, 245, 238));
+		id_number.setBounds(10, 146, 206, 27);
+		frame.getContentPane().add(id_number);
+		
+		JLabel idNumberlbl = new JLabel("ID number:");
+		idNumberlbl.setForeground(new Color(0, 51, 51));
+		idNumberlbl.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		idNumberlbl.setBounds(10, 120, 80, 15);
+		frame.getContentPane().add(idNumberlbl);
+		
+		JLabel lblDay = new JLabel("Day: ");
+		lblDay.setForeground(new Color(0, 51, 51));
+		lblDay.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		lblDay.setBounds(455, 185, 56, 15);
+		frame.getContentPane().add(lblDay);
+		
+		JMonthChooser monthChooser = new JMonthChooser();
+		monthChooser.setBounds(451, 145, 140, 24);
+		frame.getContentPane().add(monthChooser);
+		
+		JYearChooser yearChooser = new JYearChooser();
+		yearChooser.setBounds(583, 145, 70, 24);
+		frame.getContentPane().add(yearChooser);
+		
+		JLabel lblTimeIn = new JLabel("Time In");
+		lblTimeIn.setForeground(new Color(0, 51, 51));
+		lblTimeIn.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		lblTimeIn.setBounds(455, 257, 56, 15);
+		frame.getContentPane().add(lblTimeIn);
+		
+		JLabel lblTimeOut = new JLabel("Time Out");
+		lblTimeOut.setForeground(new Color(0, 51, 51));
+		lblTimeOut.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		lblTimeOut.setBounds(551, 258, 73, 15);
+		frame.getContentPane().add(lblTimeOut);
+		
+		lblMonth = new JLabel("Month:");
+		lblMonth.setForeground(new Color(0, 51, 51));
+		lblMonth.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		lblMonth.setBounds(473, 120, 80, 15);
+		frame.getContentPane().add(lblMonth);
+		
+		lblYear = new JLabel("Year:");
+		lblYear.setForeground(new Color(0, 51, 51));
+		lblYear.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		lblYear.setBounds(585, 120, 56, 15);
+		frame.getContentPane().add(lblYear);
+		
+		JTextArea time_out_1 = new JTextArea();
+		time_out_1.setBounds(683, 146, 80, 24);
+		frame.getContentPane().add(time_out_1);
+		
+		JLabel lblHolidays = new JLabel("Holidays");
+		lblHolidays.setForeground(new Color(0, 51, 51));
+		lblHolidays.setFont(new Font("Book Antiqua", Font.BOLD, 14));
+		lblHolidays.setBounds(690, 120, 73, 15);
+		frame.getContentPane().add(lblHolidays);
+		
+		JButton add_btn_1 = new JButton("Add");
+		add_btn_1.setBounds(777, 145, 80, 27);
+		frame.getContentPane().add(add_btn_1);
 		
 	}
 	
@@ -440,11 +478,12 @@ public class DTR {
 		
 		Connection con = connect();
 		try{
-			String query = "insert into employee (name, department, department_head) values(?,?,?)";
+			String query = "insert into employee (id_number,name, department, department_head) values(?,?,?,?)";
 			PreparedStatement ps = con.prepareStatement(query);
-			ps.setString(1, name.getText());
-			ps.setString(2, department.getText());
-			ps.setString(3, department_head.getText());
+			ps.setString(1, id_number.getText());
+			ps.setString(2, name.getText());
+			ps.setString(3, department.getText());
+			ps.setString(4, department_head.getText());
 
 			ps.execute();
 
