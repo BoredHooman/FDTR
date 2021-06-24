@@ -68,8 +68,10 @@ public class DTR {
 	private JTextField id_number;
 	private JLabel lblMonth;
 	private JLabel lblYear;
-	// Labels on table
+	private JButton preview;
+	private Object[]  columns = {"Day", "Time In", "Time Out", "Type"};
 	private Object[] row = new Object[4];
+	
 	/**
 	 * Launch the application.
 	 */
@@ -85,6 +87,7 @@ public class DTR {
 			}
 		});
 	}
+
 	
 	public void clock() {
 		
@@ -106,10 +109,7 @@ public class DTR {
 						Date date = cal.getTime();
 						String time12 = sdf12.format(date);
 						
-//						lblClock.setText("Time "+ hour +":"+minutes+":"+second+" Date "+month+"/"+day+"/"+year);
-//						lblClock.setText(hour +":"+minutes+":"+second);
 						lblClock.setText(time12);
-
 						lblDate_1.setText(month + 1 +"/"+day+"/"+year);
 						
 						sleep(1000);
@@ -148,11 +148,11 @@ public class DTR {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame("FDTR");
 		frame.getContentPane().setForeground(new Color(255, 255, 204));
 		frame.getContentPane().setBackground(new Color(230, 230, 250));
 		frame.setBackground(UIManager.getColor("menu"));
-		frame.setBounds(500, 100, 900, 590);
+		frame.setBounds(200, 100, 900, 590);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -206,11 +206,7 @@ public class DTR {
 		department_head.setBounds(232, 209, 206, 27);
 		frame.getContentPane().add(department_head);
 		
-//		date picker
-//		dateDays = new JDateChooser();
-//		dateDays.setBounds(287, 396, 238, 27);
-//		frame.getContentPane().add(dateDays);
-		
+		//Format the date
 		SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
 		JButton btnNewButton = new JButton("");
 		btnNewButton.setBackground(new Color(250, 240, 230));
@@ -261,13 +257,11 @@ public class DTR {
 		JLabel lblType = new JLabel("Type: ");
 		lblType.setForeground(new Color(0, 51, 51));
 		lblType.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblType.setBounds(692, 184, 56, 15);
+		lblType.setBounds(653, 184, 56, 15);
 		frame.getContentPane().add(lblType);
 
 		JTable table  = new JTable();
-		
-		Object[]  columns = {"Day", "Time In", "Time Out", "Type"};
-		
+				
 		model.setColumnIdentifiers(columns);
 		table.setModel(model);
 		table.setBackground(Color.WHITE);
@@ -308,8 +302,7 @@ public class DTR {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
 				
 				String path = "";
-//				JFileChooser j = new JFileChooser();
-				JFileChooser j=new JFileChooser();
+				JFileChooser j = new JFileChooser();
 				j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int x = j.showSaveDialog(frame);
 				
@@ -343,19 +336,17 @@ public class DTR {
 
 					doc.add(tbl);
 					
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (DocumentException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (FileNotFoundException err) {
+					err.printStackTrace();
+				} catch (DocumentException err) {
+					err.printStackTrace();
 				}
 				
 				doc.close();
 			}
 		});
 		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(724, 437, 70, 74);
+		btnGeneratePdf.setBounds(804, 466, 70, 74);
 		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
 		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
 		frame.getContentPane().add(btnGeneratePdf);
@@ -372,8 +363,6 @@ public class DTR {
 				String selectedTypes = types.getSelectedItem().toString();
 				String selectedDays = days.getSelectedItem().toString();
 
-
-//				schedule();
 				// insert inputed data to the table
 				row[0] = selectedDays;
 				row[1] = time_in.getText();
@@ -461,6 +450,16 @@ public class DTR {
 		JButton add_btn_1 = new JButton("Add");
 		add_btn_1.setBounds(777, 145, 80, 27);
 		frame.getContentPane().add(add_btn_1);
+		
+		preview = new JButton("Preview");
+		preview.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Preview preview = new Preview();
+				preview.showWindow();
+			}
+		});
+		preview.setBounds(521, 500, 89, 27);
+		frame.getContentPane().add(preview);
 		
 	}
 	
