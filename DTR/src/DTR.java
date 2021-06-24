@@ -68,7 +68,8 @@ public class DTR {
 	private JTextField id_number;
 	private JLabel lblMonth;
 	private JLabel lblYear;
-
+	// Labels on table
+	private Object[] row = new Object[4];
 	/**
 	 * Launch the application.
 	 */
@@ -216,8 +217,7 @@ public class DTR {
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		DefaultTableModel model  = new DefaultTableModel();
 		
-		// Labels on table
-		Object[] row = new Object[4];
+	
 
 		//Time in and insert other information.
 		btnNewButton.addActionListener(new ActionListener() {
@@ -225,16 +225,14 @@ public class DTR {
 			
 				saveEmployeeDetails();
 				
-				String selectedValue = types.getSelectedItem().toString();
-
+				
 				if(name.getText().trim().isEmpty() || department.getText().equals("") || 
-						sdf.format(dateDays.getDate()).equals(null) || department_head.getText().equals("")) {
+					department_head.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Please enter all data!");
 					// clear all text fields
 					name.setText("");
 					department.setText("");
 					department_head.setText("");
-					dateDays.validate();
 				}
 				
 				// get Time In
@@ -246,15 +244,10 @@ public class DTR {
 				department_head.setText("");
 				dateDays.setDate(new Date());
 				
-				// insert inputed data to the table
-				row[0] = sdf.format(dateDays.getDate());
-				row[1] = lblClock.getText();
-				row[2] = "Holiday"; 
-				row[3] = selectedValue;
-				model.addRow(row);
+				
 			}
 		});
-		btnNewButton.setBounds(567, 447, 74, 74);
+		btnNewButton.setBounds(641, 437, 74, 74);
 		Image img = new ImageIcon(this.getClass().getResource("Finger-Print-icon.png")).getImage();
 		btnNewButton.setIcon(new ImageIcon(img));
 		frame.getContentPane().add(btnNewButton);
@@ -262,13 +255,13 @@ public class DTR {
 		// Type
 		types = new JComboBox(type);
 		types.setBackground(new Color(255, 245, 238));
-		types.setBounds(585, 208, 122, 28);
+		types.setBounds(653, 208, 122, 28);
 		frame.getContentPane().add(types);
 		
 		JLabel lblType = new JLabel("Type: ");
 		lblType.setForeground(new Color(0, 51, 51));
 		lblType.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblType.setBounds(624, 184, 56, 15);
+		lblType.setBounds(692, 184, 56, 15);
 		frame.getContentPane().add(lblType);
 
 		JTable table  = new JTable();
@@ -289,7 +282,7 @@ public class DTR {
 		JScrollPane pane = new JScrollPane(table);
 		pane.setForeground(Color.RED);
 		pane.setBackground(Color.WHITE);
-		pane.setBounds(10,247,434,280);
+		pane.setBounds(10,247,508,280);
 		frame.getContentPane().add(pane);
 		
 		lblTimelbl = new JLabel("Time");
@@ -362,7 +355,7 @@ public class DTR {
 			}
 		});
 		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(471, 456, 64, 65);
+		btnGeneratePdf.setBounds(724, 446, 64, 65);
 		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
 		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
 		frame.getContentPane().add(btnGeneratePdf);
@@ -373,26 +366,36 @@ public class DTR {
 		employeeIcon.setIcon(new ImageIcon(imgEmployee));
 		frame.getContentPane().add(employeeIcon);
 		
-		JButton time_in_btn = new JButton("Add you schedule");
+		JButton time_in_btn = new JButton("Add your schedule");
 		time_in_btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				schedule();
+				String selectedTypes = types.getSelectedItem().toString();
+				String selectedDays = days.getSelectedItem().toString();
+
+
+//				schedule();
+				// insert inputed data to the table
+				row[0] = selectedDays;
+				row[1] = time_in.getText();
+				row[2] = time_out.getText(); 
+				row[3] = selectedTypes;
+				model.addRow(row);
 			}
 		});
-		time_in_btn.setBounds(454, 320, 170, 32);
+		time_in_btn.setBounds(565, 310, 170, 32);
 		frame.getContentPane().add(time_in_btn);
 		
 		time_in = new JTextArea();
-		time_in.setBounds(454, 281, 80, 27);
+		time_in.setBounds(565, 271, 80, 27);
 		frame.getContentPane().add(time_in);
 		
 		time_out = new JTextArea();
-		time_out.setBounds(544, 282, 80, 27);
+		time_out.setBounds(655, 272, 80, 27);
 		frame.getContentPane().add(time_out);
 		
 		days = new JComboBox(day);
 		days.setBackground(new Color(255, 245, 238));
-		days.setBounds(453, 208, 113, 27);
+		days.setBounds(521, 208, 113, 27);
 		frame.getContentPane().add(days);
 		
 		id_number = new JTextField();
@@ -410,7 +413,7 @@ public class DTR {
 		JLabel lblDay = new JLabel("Day: ");
 		lblDay.setForeground(new Color(0, 51, 51));
 		lblDay.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblDay.setBounds(455, 185, 56, 15);
+		lblDay.setBounds(523, 185, 56, 15);
 		frame.getContentPane().add(lblDay);
 		
 		JMonthChooser monthChooser = new JMonthChooser();
@@ -424,13 +427,13 @@ public class DTR {
 		JLabel lblTimeIn = new JLabel("Time In");
 		lblTimeIn.setForeground(new Color(0, 51, 51));
 		lblTimeIn.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblTimeIn.setBounds(455, 257, 56, 15);
+		lblTimeIn.setBounds(566, 247, 56, 15);
 		frame.getContentPane().add(lblTimeIn);
 		
 		JLabel lblTimeOut = new JLabel("Time Out");
 		lblTimeOut.setForeground(new Color(0, 51, 51));
 		lblTimeOut.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblTimeOut.setBounds(551, 258, 73, 15);
+		lblTimeOut.setBounds(662, 248, 73, 15);
 		frame.getContentPane().add(lblTimeOut);
 		
 		lblMonth = new JLabel("Month:");
@@ -478,7 +481,7 @@ public class DTR {
 		
 		Connection con = connect();
 		try{
-			String query = "insert into employee (id_number,name, department, department_head) values(?,?,?,?)";
+			String query = "insert into employee (id_number, name, department, department_head) values(?,?,?,?)";
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setString(1, id_number.getText());
 			ps.setString(2, name.getText());
@@ -492,22 +495,22 @@ public class DTR {
 		}
 	}
 	
-	public void schedule() {
-		
-		Connection con = connect();
-		try{
-			String query = "insert into daily_schedule (days, time_in, time_out, types) values(?,?,?,?)";
-			PreparedStatement ps = con.prepareStatement(query);
-			ps.setString(1, days.getSelectedItem().toString());
-			ps.setString(2, time_in.getText());
-			ps.setString(3, time_out.getText());
-			ps.setString(4, types.getSelectedItem().toString());
-
-
-			ps.execute();
-
-		}catch(Exception err) {
-			System.out.print("error : " + err);
-		}
-	}
+//	public void schedule() {
+//		
+//		Connection con = connect();
+//		try{
+//			String query = "insert into daily_schedule (days, time_in, time_out, types) values(?,?,?,?)";
+//			PreparedStatement ps = con.prepareStatement(query);
+//			ps.setString(1, days.getSelectedItem().toString());
+//			ps.setString(2, time_in.getText());
+//			ps.setString(3, time_out.getText());
+//			ps.setString(4, types.getSelectedItem().toString());
+//
+//
+//			ps.execute();
+//
+//		}catch(Exception err) {
+//			System.out.print("error : " + err);
+//		}
+//	}
 }
