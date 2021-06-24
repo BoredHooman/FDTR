@@ -219,38 +219,38 @@ public class DTR {
 		
 	
 
-		//Time in and insert other information.
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			
-				saveEmployeeDetails();
-				
-				
-				if(name.getText().trim().isEmpty() || department.getText().equals("") || 
-					department_head.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Please enter all data!");
-					// clear all text fields
-					name.setText("");
-					department.setText("");
-					department_head.setText("");
-				}
-				
-				// get Time In
-				lblClock.getText();
-				
-				// clear all text fields
-				name.setText("");
-				department.setText("");
-				department_head.setText("");
-				dateDays.setDate(new Date());
-				
-				
-			}
-		});
-		btnNewButton.setBounds(641, 437, 74, 74);
-		Image img = new ImageIcon(this.getClass().getResource("Finger-Print-icon.png")).getImage();
-		btnNewButton.setIcon(new ImageIcon(img));
-		frame.getContentPane().add(btnNewButton);
+//		//Time in and insert other information.
+//		btnNewButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//			
+//				saveEmployeeDetails();
+//				
+//				
+//				if(name.getText().trim().isEmpty() || department.getText().equals("") || 
+//					department_head.getText().equals("")) {
+//					JOptionPane.showMessageDialog(null, "Please enter all data!");
+//					// clear all text fields
+//					name.setText("");
+//					department.setText("");
+//					department_head.setText("");
+//				}
+//				
+//				// get Time In
+//				lblClock.getText();
+//				
+//				// clear all text fields
+//				name.setText("");
+//				department.setText("");
+//				department_head.setText("");
+//				dateDays.setDate(new Date());
+//				
+//				
+//			}
+//		});
+//		btnNewButton.setBounds(653, 437, 74, 74);
+//		Image img = new ImageIcon(this.getClass().getResource("Finger-Print-icon.png")).getImage();
+//		btnNewButton.setIcon(new ImageIcon(img));
+//		frame.getContentPane().add(btnNewButton);
 
 		// Type
 		types = new JComboBox(type);
@@ -355,7 +355,7 @@ public class DTR {
 			}
 		});
 		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(724, 446, 64, 65);
+		btnGeneratePdf.setBounds(724, 437, 70, 74);
 		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
 		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
 		frame.getContentPane().add(btnGeneratePdf);
@@ -494,23 +494,4 @@ public class DTR {
 			System.out.print("error : " + err);
 		}
 	}
-	
-//	public void schedule() {
-//		
-//		Connection con = connect();
-//		try{
-//			String query = "insert into daily_schedule (days, time_in, time_out, types) values(?,?,?,?)";
-//			PreparedStatement ps = con.prepareStatement(query);
-//			ps.setString(1, days.getSelectedItem().toString());
-//			ps.setString(2, time_in.getText());
-//			ps.setString(3, time_out.getText());
-//			ps.setString(4, types.getSelectedItem().toString());
-//
-//
-//			ps.execute();
-//
-//		}catch(Exception err) {
-//			System.out.print("error : " + err);
-//		}
-//	}
 }
