@@ -370,7 +370,7 @@ public class DTR {
 			public void actionPerformed(ActionEvent e) {
 				String selectedTypes = types.getSelectedItem().toString();
 				String selectedDays = days.getSelectedItem().toString();
-				
+				saveTotalHrs();
 				if(selectedTypes == "class") {
 					saveClassTbl();
 				}else if(selectedTypes == "consultation") {
@@ -456,13 +456,13 @@ public class DTR {
 		frame.getContentPane().add(lblYear);
 		
 		holiday = new JTextArea();
-		holiday.setBounds(683, 146, 80, 24);
+		holiday.setBounds(692, 146, 26, 27);
 		frame.getContentPane().add(holiday);
 		
-		JLabel lblHolidays = new JLabel("Holidays");
+		JLabel lblHolidays = new JLabel("Holidays: ");
 		lblHolidays.setForeground(new Color(0, 51, 51));
 		lblHolidays.setFont(new Font("Book Antiqua", Font.BOLD, 14));
-		lblHolidays.setBounds(690, 120, 73, 15);
+		lblHolidays.setBounds(682, 120, 73, 15);
 		frame.getContentPane().add(lblHolidays);
 		
 		JButton add_btn_1 = new JButton("Add");
@@ -473,9 +473,10 @@ public class DTR {
 					saveConsultationTable();
 					saveRelativeActivityTable();
 					saveOthersTable();
+//					saveTotalHrs();
 			}
 		});
-		add_btn_1.setBounds(777, 145, 80, 27);
+		add_btn_1.setBounds(726, 145, 56, 27);
 		frame.getContentPane().add(add_btn_1);
 		
 		preview = new JButton("Preview");
@@ -487,6 +488,7 @@ public class DTR {
 				preview.showConsultation();
 				preview.showRelated();
 				preview.showOthers();
+				preview.showTotalHrs();
 
 			}
 		});
@@ -580,9 +582,9 @@ public class DTR {
 			}else {
 				String query = "update class set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
-				ps.setString(1, "HOLIDAY");
-				ps.setString(2, "HOLIDAY");
-				ps.setString(3, "HOLIDAY");
+				ps.setString(1, " --- ");
+				ps.setString(2, " --- ");
+				ps.setString(3, " --- ");
 				ps.setString(4, holiday.getText());
 				ps.execute();
 			}
@@ -617,9 +619,9 @@ public class DTR {
 			}else {
 				String query = "update consultation set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
-				ps.setString(1, "HOLIDAY");
-				ps.setString(2, "HOLIDAY");
-				ps.setString(3, "HOLIDAY");
+				ps.setString(1, " --- ");
+				ps.setString(2, " --- ");
+				ps.setString(3, " --- ");
 				ps.setString(4, holiday.getText());
 				ps.execute();
 			}
@@ -653,9 +655,9 @@ public class DTR {
 			}else {
 				String query = "update related set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
-				ps.setString(1, "HOLIDAY");
-				ps.setString(2, "HOLIDAY");
-				ps.setString(3, "HOLIDAY");
+				ps.setString(1, " --- ");
+				ps.setString(2, " --- ");
+				ps.setString(3, " --- ");
 				ps.setString(4, holiday.getText());
 				ps.execute();
 			}
@@ -675,12 +677,6 @@ public class DTR {
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
 		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
-		     
-		 	String querry = "select * from class";
-			Statement st  = con.createStatement();
-			ResultSet rs = st.executeQuery(querry);
-			DefaultTableModel model = new DefaultTableModel();
-			rs.next();
 
 			if(holiday.getText().equals("")) {
 				
@@ -695,9 +691,62 @@ public class DTR {
 			}else {
 				String query = "update others set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, "---");
+				ps.setString(2, " --- ");
+				ps.setString(3, " --- ");
+				ps.setString(4, holiday.getText());
+				ps.execute();
+			}
+		}catch(Exception err) {
+			System.out.print("error : " + err);
+		}
+	}
+	
+	public void saveTotalHrs() {
+		
+		Connection con = connect();
+		DefaultTableModel model = new DefaultTableModel();
+
+		try{
+			String selectQuery = "select hrs from class";
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(selectQuery);
+			
+			while(rs.next()) {
+//				model.addRow(new Object[] {
+						rs.getString("hrs");
+//						System.out.print(rs.getString("hrs"));
+//				});
+			}
+				rs.close();
+				st.close();
+			
+			
+			
+			
+			
+			
+			
+			 String hrs = null;
+			 LocalTime in = LocalTime.parse(time_in.getText());
+		     LocalTime out = LocalTime.parse(time_out.getText());
+		     int hoursDiff = (out.getHour() - in.getHour()),
+		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
+		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
+		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
+		     
+			if(holiday.getText().equals("")) {
+				
+//			    System.out.print(hrs);
+
+				String query = "insert into total_hrs (total_hours) values(?)";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, time_in.getText());
+				ps.execute();
+			}else {
+				String query = "update total_hrs set total_hours = ? where id = ?";
+				PreparedStatement ps = con.prepareStatement(query);
 				ps.setString(1, "HOLIDAY");
-				ps.setString(2, "HOLIDAY");
-				ps.setString(3, "HOLIDAY");
 				ps.setString(4, holiday.getText());
 				ps.execute();
 			}

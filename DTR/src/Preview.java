@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
 
@@ -14,6 +16,8 @@ public class Preview {
 	private static JTable consultationTable;
 	private static JTable relatedTable;
 	private static JTable othersTable;
+	private static JTable totalHrsTable;
+	
 
 	public static void main(String[] args) {
 		showWindow();
@@ -21,11 +25,12 @@ public class Preview {
 		showConsultation();
 		showRelated();
 		showOthers();
+		showTotalHrs();
 	}
 	
 	public static void showWindow() {
 		JFrame frame = new JFrame("Preview");
-		frame.setBounds(300, 170, 890, 600);
+		frame.setBounds(300, 170, 1000, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -37,15 +42,15 @@ public class Preview {
 		scrollPaneClass.setViewportView(classTable);
 		
 		JScrollPane scrollPaneConsultation = new JScrollPane();
-		scrollPaneConsultation.setBounds(227, 80, 213, 300);
+		scrollPaneConsultation.setBounds(233, 80, 213, 300);
 		frame.getContentPane().add(scrollPaneConsultation);
 		
 		consultationTable = new JTable();
-//		consultationTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		consultationTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneConsultation.setViewportView(consultationTable);
 		
 		JScrollPane scrollPaneRelated = new JScrollPane();
-		scrollPaneRelated.setBounds(445, 80, 213, 300);
+		scrollPaneRelated.setBounds(456, 80, 213, 300);
 		frame.getContentPane().add(scrollPaneRelated);
 		
 		relatedTable = new JTable();
@@ -53,12 +58,20 @@ public class Preview {
 		scrollPaneRelated.setViewportView(relatedTable);
 		
 		JScrollPane scrollPaneOthers = new JScrollPane();
-		scrollPaneOthers.setBounds(661, 80, 213, 300);
+		scrollPaneOthers.setBounds(679, 80, 213, 300);
 		frame.getContentPane().add(scrollPaneOthers);
 		
 		othersTable = new JTable();
 		othersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneOthers.setViewportView(othersTable);
+		
+		JScrollPane scrollPaneTotalHrs = new JScrollPane();
+		scrollPaneTotalHrs.setBounds(902, 80, 73, 300);
+		frame.getContentPane().add(scrollPaneTotalHrs);
+		
+		totalHrsTable = new JTable();
+//		totalHrsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		scrollPaneTotalHrs.setViewportView(totalHrsTable);
 		frame.setVisible(true);
 	}
 	
@@ -75,12 +88,14 @@ public class Preview {
 	}
 	
 	public static void showClass() {
+		
 		Connection con = connect();
 		DefaultTableModel model = new DefaultTableModel();
+		
 		model.addColumn("Day");
-		model.addColumn("Time In");
-		model.addColumn("Time out");
-		model.addColumn("Hours");
+		model.addColumn("In");
+		model.addColumn("Out");
+		model.addColumn("Hrs");
 		
 		
 		try {
@@ -99,6 +114,9 @@ public class Preview {
 				rs.close();
 				st.close();
 			
+//				DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+//				centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+//				classTable.getColumnModel().getColumn(0).setCellRenderer( centerRenderer );
 				classTable.setModel(model);
 				classTable.setAutoResizeMode(0);
 				classTable.getColumnModel().getColumn(0).setPreferredWidth(52);
@@ -111,14 +129,15 @@ public class Preview {
 			System.out.print("error: " + err);
 		}
 		
-		}
+	}
 	
 	public static void showConsultation() {
+		
 		Connection con = connect();
 		DefaultTableModel model = new DefaultTableModel();
-		model.addColumn("Time In");
-		model.addColumn("Time out");
-		model.addColumn("Hours");
+		model.addColumn("In");
+		model.addColumn("Out");
+		model.addColumn("Hrs");
 		
 		try {
 			String querry = "select * from consultation";
@@ -144,15 +163,15 @@ public class Preview {
 		}catch(Exception err) {
 			System.out.print("error: " + err);
 		}
-		
-		}
+	}
 	
 	public static void showRelated() {
+		
 		Connection con = connect();
 		DefaultTableModel model = new DefaultTableModel();
-		model.addColumn("Time In");
-		model.addColumn("Time out");
-		model.addColumn("Hours");
+		model.addColumn("In");
+		model.addColumn("Out");
+		model.addColumn("Hrs");
 		
 		try {
 			String querry = "select * from related";
@@ -178,20 +197,20 @@ public class Preview {
 		}catch(Exception err) {
 			System.out.print("error: " + err);
 		}
-		
 	}
 	
 	public static void showOthers() {
+		
 		Connection con = connect();
 		DefaultTableModel model = new DefaultTableModel();
-		model.addColumn("Time In");
-		model.addColumn("Time out");
-		model.addColumn("Hours");
+		model.addColumn("In");
+		model.addColumn("Out");
+		model.addColumn("Hrs");
 		
 		try {
-			String querry = "select * from others";
+			String query = "select * from others";
 			Statement st  = con.createStatement();
-			ResultSet rs = st.executeQuery(querry);
+			ResultSet rs = st.executeQuery(query);
 			
 			while(rs.next()) {
 				model.addRow(new Object[] {
@@ -212,6 +231,40 @@ public class Preview {
 		}catch(Exception err) {
 			System.out.print("error: " + err);
 		}
+	}
+	
+	public static void showTotalHrs() {
+		Connection con = connect();
+		DefaultTableModel model = new DefaultTableModel();
+		model.addColumn("Total Hrs");
+		
+//		try {
+//			String querry = "select * from class";
+//			Statement st  = con.createStatement();
+//			ResultSet rs = st.executeQuery(querry);
+//			
+//			while(rs.next()) {
+//				model.addRow(new Object[] {
+//						rs.getString("id"),
+//						rs.getString("time_in"),
+//						rs.getString("time_out"),
+//						rs.getString("hrs"),
+//				});
+//			}
+//				rs.close();
+//				st.close();
+//			
+				totalHrsTable.setModel(model);
+//				totalHrsTable.setAutoResizeMode(0);
+//				totalHrsTable.getColumnModel().getColumn(0).setPreferredWidth(52);
+//				totalHrsTable.getColumnModel().getColumn(1).setPreferredWidth(52);
+//				totalHrsTable.getColumnModel().getColumn(2).setPreferredWidth(52);
+//				totalHrsTable.getColumnModel().getColumn(3).setPreferredWidth(52);
+//
+//
+//		}catch(Exception err) {
+//			System.out.print("error: " + err);
+//		}
 		
 	}
 }
