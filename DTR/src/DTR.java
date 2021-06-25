@@ -23,7 +23,12 @@ import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -54,9 +59,9 @@ public class DTR {
 	private JDateChooser dateChooser;
 	private JTable table;
 	private JComboBox types;
-	private String[] type = {"Class", "Consultation", "Relative Activities", "Others"};
+	private String[] type = {"class", "consultation", "related activities", "others"};
 	private JComboBox days;
-	private String[] day = {"Monday", "Tuesday", "Wednessday", "Thursday", "Friday", "Saturday", "Sunday"};
+	private String[] day = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 	private JLabel lblTimelbl;
 	private JLabel lblDate;
 	private JLabel lblDate_1;
@@ -71,6 +76,9 @@ public class DTR {
 	private JButton preview;
 	private Object[]  columns = {"Day", "Time In", "Time Out", "Type"};
 	private Object[] row = new Object[4];
+	private JTextArea holiday;
+	private JLabel dayyys;
+
 	
 	/**
 	 * Launch the application.
@@ -276,7 +284,7 @@ public class DTR {
 		JScrollPane pane = new JScrollPane(table);
 		pane.setForeground(Color.RED);
 		pane.setBackground(Color.WHITE);
-		pane.setBounds(10,247,508,280);
+		pane.setBounds(10,247,508,293);
 		frame.getContentPane().add(pane);
 		
 		lblTimelbl = new JLabel("Time");
@@ -362,7 +370,17 @@ public class DTR {
 			public void actionPerformed(ActionEvent e) {
 				String selectedTypes = types.getSelectedItem().toString();
 				String selectedDays = days.getSelectedItem().toString();
-
+				
+				if(selectedTypes == "class") {
+					saveClassTbl();
+				}else if(selectedTypes == "consultation") {
+					saveConsultationTable();
+				}else if(selectedTypes == "related activities") {
+					saveRelativeActivityTable();
+				}else if(selectedTypes == "others") {
+					saveOthersTable();
+				}
+				
 				// insert inputed data to the table
 				row[0] = selectedDays;
 				row[1] = time_in.getText();
@@ -437,9 +455,9 @@ public class DTR {
 		lblYear.setBounds(585, 120, 56, 15);
 		frame.getContentPane().add(lblYear);
 		
-		JTextArea time_out_1 = new JTextArea();
-		time_out_1.setBounds(683, 146, 80, 24);
-		frame.getContentPane().add(time_out_1);
+		holiday = new JTextArea();
+		holiday.setBounds(683, 146, 80, 24);
+		frame.getContentPane().add(holiday);
 		
 		JLabel lblHolidays = new JLabel("Holidays");
 		lblHolidays.setForeground(new Color(0, 51, 51));
@@ -448,6 +466,15 @@ public class DTR {
 		frame.getContentPane().add(lblHolidays);
 		
 		JButton add_btn_1 = new JButton("Add");
+		add_btn_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+					saveClassTbl();
+					saveConsultationTable();
+					saveRelativeActivityTable();
+					saveOthersTable();
+			}
+		});
 		add_btn_1.setBounds(777, 145, 80, 27);
 		frame.getContentPane().add(add_btn_1);
 		
@@ -456,12 +483,45 @@ public class DTR {
 			public void actionPerformed(ActionEvent e) {
 				Preview preview = new Preview();
 				preview.showWindow();
+				preview.showClass();
+				preview.showConsultation();
+				preview.showRelated();
+				preview.showOthers();
+
 			}
 		});
-		preview.setBounds(521, 500, 89, 27);
+		preview.setBounds(583, 353, 152, 41);
 		frame.getContentPane().add(preview);
 		
+//		JDateChooser dateChooser_1 = new JDateChooser();
+//		dateChooser_1.getCalendarButton().addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//			
+//			}
+//		});
+//		dateChooser_1.setBounds(565, 381, 74, 20);
+//		frame.getContentPane().add(dateChooser_1);
+////		String date = dateChooser_1.getDate().toString();
+//		
+//		dayyys = new JLabel("New label");
+//		dayyys.setBounds(565, 426, 104, 14);
+//		frame.getContentPane().add(dayyys);
+//	
+////		dayyys.setText(date);
+//		
+//		JButton btnNewButton_1 = new JButton("New button");
+//		btnNewButton_1.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				 DateFormat fmt = new SimpleDateFormat("EEEE");
+//			        String date = fmt.format(dateChooser_1.getDate()); //jdatechooser
+//			        dayyys.setText(date);
+//			}
+//		});
+//		btnNewButton_1.setBounds(646, 381, 89, 23);
+//		frame.getContentPane().add(btnNewButton_1);
+//
 	}
+	
 	
 	
 	static Connection connect() {
@@ -489,6 +549,158 @@ public class DTR {
 
 			ps.execute();
 
+		}catch(Exception err) {
+			System.out.print("error : " + err);
+		}
+	}
+	
+	public void saveClassTbl() {
+		Connection con = connect();
+		try{
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
+			 String hrs = null;
+			 LocalTime in = LocalTime.parse(time_in.getText());
+		     LocalTime out = LocalTime.parse(time_out.getText());
+		     int hoursDiff = (out.getHour() - in.getHour()),
+		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
+		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
+		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
+		     
+			if(holiday.getText().equals("")) {
+				
+			    System.out.print(hrs);
+			    int dayTbl = 0;
+			    dayTbl++;
+				String query = "insert into class (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, time_in.getText());
+				ps.setString(2, time_out.getText());
+				ps.setString(3, hrs.toString());
+				ps.execute();
+			}else {
+				String query = "update class set time_in = ?, time_out = ?, hrs = ? where id = ?";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, "HOLIDAY");
+				ps.setString(2, "HOLIDAY");
+				ps.setString(3, "HOLIDAY");
+				ps.setString(4, holiday.getText());
+				ps.execute();
+			}
+			
+		}catch(Exception err) {
+			System.out.print("error : " + err);
+		}
+	}
+	
+	public void saveConsultationTable() {
+		Connection con = connect();
+		try{
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
+			 String hrs = null;
+			 LocalTime in = LocalTime.parse(time_in.getText());
+		     LocalTime out = LocalTime.parse(time_out.getText());
+		     int hoursDiff = (out.getHour() - in.getHour()),
+		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
+		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
+		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
+		     
+			if(holiday.getText().equals("")) {
+				
+			    System.out.print(hrs);
+
+				String query = "insert into consultation (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, time_in.getText());
+				ps.setString(2, time_out.getText());
+				ps.setString(3, hrs.toString());
+				ps.execute();
+			}else {
+				String query = "update consultation set time_in = ?, time_out = ?, hrs = ? where id = ?";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, "HOLIDAY");
+				ps.setString(2, "HOLIDAY");
+				ps.setString(3, "HOLIDAY");
+				ps.setString(4, holiday.getText());
+				ps.execute();
+			}
+		}catch(Exception err) {
+			System.out.print("error : " + err);
+		}
+	}
+	
+	public void saveRelativeActivityTable() {
+		Connection con = connect();
+		try{
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
+			 String hrs = null;
+			 LocalTime in = LocalTime.parse(time_in.getText());
+		     LocalTime out = LocalTime.parse(time_out.getText());
+		     int hoursDiff = (out.getHour() - in.getHour()),
+		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
+		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
+		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
+
+			if(holiday.getText().equals("")) {
+				
+			    System.out.print(hrs);
+
+				String query = "insert into related (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, time_in.getText());
+				ps.setString(2, time_out.getText());
+				ps.setString(3, hrs.toString());
+				ps.execute();
+			}else {
+				String query = "update related set time_in = ?, time_out = ?, hrs = ? where id = ?";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, "HOLIDAY");
+				ps.setString(2, "HOLIDAY");
+				ps.setString(3, "HOLIDAY");
+				ps.setString(4, holiday.getText());
+				ps.execute();
+			}
+		}catch(Exception err) {
+			System.out.print("error : " + err);
+		}
+	}
+	
+	public void saveOthersTable() {
+		Connection con = connect();
+		try{
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
+			 String hrs = null;
+			 LocalTime in = LocalTime.parse(time_in.getText());
+		     LocalTime out = LocalTime.parse(time_out.getText());
+		     int hoursDiff = (out.getHour() - in.getHour()),
+		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
+		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
+		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
+		     
+		 	String querry = "select * from class";
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(querry);
+			DefaultTableModel model = new DefaultTableModel();
+			rs.next();
+
+			if(holiday.getText().equals("")) {
+				
+			    System.out.print(hrs);
+
+				String query = "insert into others (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, time_in.getText());
+				ps.setString(2, time_out.getText());
+				ps.setString(3, hrs.toString());
+				ps.execute();
+			}else {
+				String query = "update others set time_in = ?, time_out = ?, hrs = ? where id = ?";
+				PreparedStatement ps = con.prepareStatement(query);
+				ps.setString(1, "HOLIDAY");
+				ps.setString(2, "HOLIDAY");
+				ps.setString(3, "HOLIDAY");
+				ps.setString(4, holiday.getText());
+				ps.execute();
+			}
 		}catch(Exception err) {
 			System.out.print("error : " + err);
 		}
