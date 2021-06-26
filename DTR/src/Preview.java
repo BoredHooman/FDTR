@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -7,6 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.PopupFactory;
+import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleConstants.ColorConstants;
@@ -51,6 +53,7 @@ public class Preview {
 		frame.setBounds(200, 100, 1000, 540);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setDefaultCloseOperation(0);
 		
 		JScrollPane scrollPaneClass = new JScrollPane();
 		scrollPaneClass.setBounds(10, 80, 213, 300);
@@ -103,6 +106,7 @@ public class Preview {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					
 					Connection con = connect();
 					String file_name = "";
 					JFileChooser j = new JFileChooser();
@@ -115,7 +119,10 @@ public class Preview {
 					Document document = new Document();
 					PdfWriter.getInstance(document, new FileOutputStream(file_name + "dtr.pdf"));
 					document.open();
-										
+					
+					document.add(new Paragraph("Class"));
+					document.add(new Paragraph("\n"));
+					
 					String classQ = "select * from class";
 					Statement class_st  = con.createStatement();
 					ResultSet class_rs = class_st.executeQuery(classQ);
@@ -133,8 +140,12 @@ public class Preview {
 						tbl.addCell(class_rs.getString("time_out"));
 						tbl.addCell(class_rs.getString("hrs"));
 					}
-				
-
+					document.add(tbl);
+					document.add(new Paragraph("\n"));
+					
+					document.add(new Paragraph("Consultation"));
+					document.add(new Paragraph("\n"));
+					
 					String consultationQ = "select * from consultation";
 					Statement consultation_st  = con.createStatement();
 					ResultSet consultation_rs = consultation_st.executeQuery(consultationQ);
@@ -152,17 +163,77 @@ public class Preview {
 						consult_tbl.addCell(consultation_rs.getString("time_out"));
 						consult_tbl.addCell(consultation_rs.getString("hrs"));
 					}
-					document.add(tbl);
+					document.add(consult_tbl);
+					document.add(new Paragraph("\n"));
+
+					document.add(new Paragraph("Related"));
+					document.add(new Paragraph("\n"));
+					
+					String relatedQ = "select * from related";
+					Statement related_st  = con.createStatement();
+					ResultSet related_rs = class_st.executeQuery(relatedQ);
+
+					PdfPTable related_tbl = new PdfPTable(4);
+					
+					related_tbl.addCell("Day");
+					related_tbl.addCell("Time In");
+					related_tbl.addCell("Time Out");
+					related_tbl.addCell("Hrs");
+					
+					while(related_rs.next()) {
+						related_tbl.addCell(related_rs.getString("id"));
+						related_tbl.addCell(related_rs.getString("time_in"));
+						related_tbl.addCell(related_rs.getString("time_out"));
+						related_tbl.addCell(related_rs.getString("hrs"));
+					}
+					document.add(related_tbl);
+					document.add(new Paragraph("\n"));
+					
+					document.add(new Paragraph("Others"));
+					document.add(new Paragraph("\n"));
+					
+					String othersQ = "select * from others";
+					Statement others_st  = con.createStatement();
+					ResultSet others_rs = class_st.executeQuery(othersQ);
+
+					PdfPTable others_tbl = new PdfPTable(4);
+					
+					others_tbl.addCell("Day");
+					others_tbl.addCell("Time In");
+					others_tbl.addCell("Time Out");
+					others_tbl.addCell("Hrs");
+					
+					while(others_rs.next()) {
+						others_tbl.addCell(others_rs.getString("id"));
+						others_tbl.addCell(others_rs.getString("time_in"));
+						others_tbl.addCell(others_rs.getString("time_out"));
+						others_tbl.addCell(others_rs.getString("hrs"));
+					}
+					document.add(others_tbl);
+					document.add(new Paragraph("\n"));
 
 					document.close();
 					
 				}catch(Exception err) {
-					System.out.print(err);
+					System.out.print("Error: " + err);
 				}
 			}
 		});
-		btnNewButton.setBounds(779, 409, 195, 57);
+		btnNewButton.setBounds(569, 414, 195, 57);
 		frame.getContentPane().add(btnNewButton);
+		
+		JButton btnExit = new JButton("EXIT");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				deleteAllData();
+				frame.dispose();
+			}
+		});
+		btnExit.setForeground(Color.WHITE);
+		btnExit.setFont(new Font("Bell MT", Font.BOLD, 17));
+		btnExit.setBackground(new Color(255, 0, 0));
+		btnExit.setBounds(780, 414, 195, 57);
+		frame.getContentPane().add(btnExit);
 		frame.setVisible(true);
 	}
 	
@@ -361,6 +432,31 @@ public class Preview {
 //			System.out.print("error: " + err);
 //		}
 		
+	}
+	
+	public static void deleteAllData() {
+		Connection con = connect();
+		try {
+			String deleteQueryClass = "truncate class";
+			PreparedStatement ps_class = con.prepareStatement(deleteQueryClass);
+			ps_class.execute();
+			
+			String deleteQueryRelated = "truncate related";
+			PreparedStatement ps_relative = con.prepareStatement(deleteQueryRelated);
+			ps_relative.execute();
+			
+			String deleteQueryConsultation = "truncate consultation"; 
+			PreparedStatement ps_consulation = con.prepareStatement(deleteQueryConsultation);
+			ps_consulation.execute();
+			
+			String deleteOthers = "truncate others";
+			PreparedStatement ps_others = con.prepareStatement(deleteOthers);
+			ps_others.execute();
+			con.close();
+			
+		}catch(Exception err) {
+			System.out.print("error: " + err);
+		}
 	}
 }
 
