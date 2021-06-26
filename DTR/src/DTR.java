@@ -495,6 +495,7 @@ public class DTR {
 				preview.showRelated();
 				preview.showOthers();
 				preview.showTotalHrs();
+				saveEmployeeDetails();
 
 			}
 		});

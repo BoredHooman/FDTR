@@ -13,10 +13,20 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.StyleConstants.ColorConstants;
 
+import com.itextpdf.text.BaseColor;
+
+//import com.itextpdf.text.BaseColor;
+//import com.itextpdf.text.Font;
+
 import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Table;
+import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+
 
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
@@ -27,7 +37,8 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
-import java.awt.Font;
+//import java.awt.Font;
+
 
 public class Preview {
 	
@@ -50,13 +61,13 @@ public class Preview {
 	public static void showWindow() {
 		JFrame frame = new JFrame("Preview");
 		frame.getContentPane().setBackground(new Color(230, 230, 250));
-		frame.setBounds(200, 100, 1000, 540);
+		frame.setBounds(200, 100, 1000, 680);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(0);
 		
 		JScrollPane scrollPaneClass = new JScrollPane();
-		scrollPaneClass.setBounds(10, 80, 213, 300);
+		scrollPaneClass.setBounds(10, 227, 213, 300);
 		frame.getContentPane().add(scrollPaneClass);
 		
 		classTable = new JTable();
@@ -64,7 +75,7 @@ public class Preview {
 		scrollPaneClass.setViewportView(classTable);
 		
 		JScrollPane scrollPaneConsultation = new JScrollPane();
-		scrollPaneConsultation.setBounds(233, 80, 213, 300);
+		scrollPaneConsultation.setBounds(233, 227, 213, 300);
 		frame.getContentPane().add(scrollPaneConsultation);
 		
 		consultationTable = new JTable();
@@ -73,7 +84,7 @@ public class Preview {
 		scrollPaneConsultation.setViewportView(consultationTable);
 		
 		JScrollPane scrollPaneRelated = new JScrollPane();
-		scrollPaneRelated.setBounds(456, 80, 213, 300);
+		scrollPaneRelated.setBounds(456, 227, 213, 300);
 		frame.getContentPane().add(scrollPaneRelated);
 		
 		relatedTable = new JTable();
@@ -82,7 +93,7 @@ public class Preview {
 		scrollPaneRelated.setViewportView(relatedTable);
 		
 		JScrollPane scrollPaneOthers = new JScrollPane();
-		scrollPaneOthers.setBounds(679, 80, 213, 300);
+		scrollPaneOthers.setBounds(679, 227, 213, 300);
 		frame.getContentPane().add(scrollPaneOthers);
 		
 		othersTable = new JTable();
@@ -91,7 +102,7 @@ public class Preview {
 		scrollPaneOthers.setViewportView(othersTable);
 		
 		JScrollPane scrollPaneTotalHrs = new JScrollPane();
-		scrollPaneTotalHrs.setBounds(902, 80, 73, 300);
+		scrollPaneTotalHrs.setBounds(902, 227, 73, 300);
 		frame.getContentPane().add(scrollPaneTotalHrs);
 		
 		totalHrsTable = new JTable();
@@ -100,7 +111,7 @@ public class Preview {
 		scrollPaneTotalHrs.setViewportView(totalHrsTable);
 		
 		JButton btnNewButton = new JButton("Generate PDF");
-		btnNewButton.setFont(new Font("Bell MT", Font.BOLD, 17));
+//		btnNewButton.setFont(new Font("Bell MT", Font.BOLD, 17));
 		btnNewButton.setForeground(Color.WHITE);
 		btnNewButton.setBackground(new Color(135, 206, 235));
 		btnNewButton.addActionListener(new ActionListener() {
@@ -118,8 +129,49 @@ public class Preview {
 					}
 					Document document = new Document();
 					PdfWriter.getInstance(document, new FileOutputStream(file_name + "dtr.pdf"));
+					
 					document.open();
 					
+					Paragraph rp = new Paragraph("Republic of the Philippines");
+					rp.setAlignment(Element.ALIGN_CENTER);
+					document.add(rp);
+					
+					Paragraph msu = new Paragraph("Mindanao State University");
+					msu.setAlignment(Element.ALIGN_CENTER);
+					document.add(msu);
+					
+					Paragraph it = new Paragraph("ILIGAN INSTITUTE OF TECHNOLOGY");
+					it.setAlignment(Element.ALIGN_CENTER);
+					document.add(it);
+					
+					Paragraph ic = new Paragraph("Iligan City");
+					ic.setAlignment(Element.ALIGN_CENTER);
+					document.add(ic);
+					
+					Font f = new Font(Font.BOLD);
+					
+					Paragraph fdtr = new Paragraph("FACULTY DAILY TIME RECORD", f);
+					fdtr.setAlignment(Element.ALIGN_CENTER);
+					document.add(fdtr);
+					
+					Paragraph monYear = new Paragraph("For the month of");
+					monYear.setAlignment(Element.ALIGN_CENTER);
+					document.add(monYear);
+					
+					document.add(new Paragraph("\n"));
+
+					
+					String employeeQuery = "select * from employee";
+					Statement employee_st  = con.createStatement();
+					ResultSet employee_rs = employee_st.executeQuery(employeeQuery);
+					
+					while(employee_rs.next()) {
+						document.add(new Paragraph(employee_rs.getString("id_number")));
+						document.add(new Paragraph(employee_rs.getString("name")));
+						document.add(new Paragraph(employee_rs.getString("department")));
+					}
+					
+					document.add(new Paragraph("\n"));
 					document.add(new Paragraph("Class"));
 					document.add(new Paragraph("\n"));
 					
@@ -219,7 +271,7 @@ public class Preview {
 				}
 			}
 		});
-		btnNewButton.setBounds(569, 414, 195, 57);
+		btnNewButton.setBounds(569, 561, 195, 57);
 		frame.getContentPane().add(btnNewButton);
 		
 		JButton btnExit = new JButton("EXIT");
@@ -230,10 +282,50 @@ public class Preview {
 			}
 		});
 		btnExit.setForeground(Color.WHITE);
-		btnExit.setFont(new Font("Bell MT", Font.BOLD, 17));
+//		btnExit.setFont(new Font("Bell MT", Font.BOLD, 17));
 		btnExit.setBackground(new Color(255, 0, 0));
-		btnExit.setBounds(780, 414, 195, 57);
+		btnExit.setBounds(780, 561, 195, 57);
 		frame.getContentPane().add(btnExit);
+		
+		JLabel lblNewLabel = new JLabel("Name: ");
+		lblNewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+		lblNewLabel.setBounds(10, 182, 41, 21);
+		frame.getContentPane().add(lblNewLabel);
+		
+		JLabel lblDepartment = new JLabel("Department: ");
+		lblDepartment.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+		lblDepartment.setBounds(582, 182, 87, 21);
+		frame.getContentPane().add(lblDepartment);
+		
+		JLabel lblNewLabel_1 = new JLabel("Republic of the Philippines");
+		lblNewLabel_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
+		lblNewLabel_1.setBounds(391, 11, 160, 21);
+		frame.getContentPane().add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_1_1 = new JLabel("Mindanao State University");
+		lblNewLabel_1_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
+		lblNewLabel_1_1.setBounds(391, 36, 169, 21);
+		frame.getContentPane().add(lblNewLabel_1_1);
+		
+		JLabel lblNewLabel_1_1_1 = new JLabel("ILIGAN INSTITUTE OF TECHNOLOGY");
+		lblNewLabel_1_1_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
+		lblNewLabel_1_1_1.setBounds(368, 57, 230, 21);
+		frame.getContentPane().add(lblNewLabel_1_1_1);
+		
+		JLabel lblNewLabel_1_1_1_1 = new JLabel("Iligan City");
+		lblNewLabel_1_1_1_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
+		lblNewLabel_1_1_1_1.setBounds(440, 78, 73, 21);
+		frame.getContentPane().add(lblNewLabel_1_1_1_1);
+		
+		JLabel lblNewLabel_1_1_1_1_1 = new JLabel("FACULTY DAILY TIME RECORD");
+		lblNewLabel_1_1_1_1_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
+		lblNewLabel_1_1_1_1_1.setBounds(354, 99, 246, 21);
+		frame.getContentPane().add(lblNewLabel_1_1_1_1_1);
+		
+		JLabel lblNewLabel_1_1_1_1_2 = new JLabel("For the month of");
+		lblNewLabel_1_1_1_1_2.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
+		lblNewLabel_1_1_1_1_2.setBounds(425, 120, 111, 21);
+		frame.getContentPane().add(lblNewLabel_1_1_1_1_2);
 		frame.setVisible(true);
 	}
 	
