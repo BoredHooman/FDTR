@@ -305,59 +305,59 @@ public class DTR {
 		lblDate_1.setBounds(662, 45, 182, 14);
 		frame.getContentPane().add(lblDate_1);
 		
-		btnGeneratePdf = new JButton("");
-		btnGeneratePdf.addActionListener(new ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent e) {
-				
-				String path = "";
-				JFileChooser j = new JFileChooser();
-				j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-				int x = j.showSaveDialog(frame);
-				
-				if(x==JFileChooser.APPROVE_OPTION) {
-					path = j.getSelectedFile().getPath(); 
-				}
-				
-				Document doc = new Document();
-				try {
-					PdfWriter.getInstance(doc, new FileOutputStream(path+"DTR123.pdf"));
-					doc.open();
-					
-					PdfPTable tbl = new PdfPTable(4);
-					
-					tbl.addCell("Day");
-					tbl.addCell("Time In");
-					tbl.addCell("Time Out");
-					tbl.addCell("Type");
-					
-					for(int i = 0; i< table.getRowCount(); i++) {
-						String day= table.getValueAt(i, 0).toString();	
-						String timeIn= table.getValueAt(i, 1).toString();
-						String timeOut= table.getValueAt(i, 2).toString();
-						String type= table.getValueAt(i, 3).toString();
-						
-						tbl.addCell(day);
-						tbl.addCell(timeIn);
-						tbl.addCell(timeOut);
-						tbl.addCell(type);
-					}
-
-					doc.add(tbl);
-					
-				} catch (FileNotFoundException err) {
-					err.printStackTrace();
-				} catch (DocumentException err) {
-					err.printStackTrace();
-				}
-				
-				doc.close();
-			}
-		});
-		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
-		btnGeneratePdf.setBounds(804, 466, 70, 74);
-		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
-		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
-		frame.getContentPane().add(btnGeneratePdf);
+//		btnGeneratePdf = new JButton(""); geneeate pdf
+//		btnGeneratePdf.addActionListener(new ActionListener() {
+//			public void actionPerformed(java.awt.event.ActionEvent e) {
+//				
+//				String path = "";
+//				JFileChooser j = new JFileChooser();
+//				j.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//				int x = j.showSaveDialog(frame);
+//				
+//				if(x==JFileChooser.APPROVE_OPTION) {
+//					path = j.getSelectedFile().getPath(); 
+//				}
+//				
+//				Document doc = new Document();
+//				try {
+//					PdfWriter.getInstance(doc, new FileOutputStream(path+"DTR123.pdf"));
+//					doc.open();
+//					
+//					PdfPTable tbl = new PdfPTable(4);
+//					
+//					tbl.addCell("Day");
+//					tbl.addCell("Time In");
+//					tbl.addCell("Time Out");
+//					tbl.addCell("Type");
+//					
+//					for(int i = 0; i< table.getRowCount(); i++) {
+//						String day= table.getValueAt(i, 0).toString();	
+//						String timeIn= table.getValueAt(i, 1).toString();
+//						String timeOut= table.getValueAt(i, 2).toString();
+//						String type= table.getValueAt(i, 3).toString();
+//						
+//						tbl.addCell(day);
+//						tbl.addCell(timeIn);
+//						tbl.addCell(timeOut);
+//						tbl.addCell(type);
+//					}
+//
+//					doc.add(tbl);
+//					
+//				} catch (FileNotFoundException err) {
+//					err.printStackTrace();
+//				} catch (DocumentException err) {
+//					err.printStackTrace();
+//				}
+//				
+//				doc.close();
+//			}
+//		});
+//		btnGeneratePdf.setFont(new Font("Tahoma", Font.BOLD, 14));
+//		btnGeneratePdf.setBounds(804, 466, 70, 74);
+//		Image imgPDF = new ImageIcon(this.getClass().getResource("PDF-icon.png")).getImage();
+//		btnGeneratePdf.setIcon(new ImageIcon(imgPDF));
+//		frame.getContentPane().add(btnGeneratePdf);
 		
 		employeeIcon = new JLabel("");
 		employeeIcon.setBounds(10, 11, 96, 96);
@@ -366,6 +366,9 @@ public class DTR {
 		frame.getContentPane().add(employeeIcon);
 		
 		JButton time_in_btn = new JButton("Add your schedule");
+		time_in_btn.setForeground(new Color(255, 255, 255));
+		time_in_btn.setFont(new Font("Sitka Text", Font.BOLD, 14));
+		time_in_btn.setBackground(new Color(135, 206, 235));
 		time_in_btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String selectedTypes = types.getSelectedItem().toString();
@@ -479,7 +482,10 @@ public class DTR {
 		add_btn_1.setBounds(726, 145, 56, 27);
 		frame.getContentPane().add(add_btn_1);
 		
-		preview = new JButton("Preview");
+		preview = new JButton("View");
+		preview.setFont(new Font("Sitka Text", Font.BOLD, 14));
+		preview.setForeground(new Color(255, 255, 255));
+		preview.setBackground(new Color(135, 206, 235));
 		preview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Preview preview = new Preview();
@@ -492,7 +498,7 @@ public class DTR {
 
 			}
 		});
-		preview.setBounds(583, 353, 152, 41);
+		preview.setBounds(598, 353, 113, 32);
 		frame.getContentPane().add(preview);
 		
 //		JDateChooser dateChooser_1 = new JDateChooser();
@@ -559,10 +565,9 @@ public class DTR {
 	public void saveClassTbl() {
 		Connection con = connect();
 		try{
-			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText());
-		     LocalTime out = LocalTime.parse(time_out.getText());
+			 LocalTime in = LocalTime.parse(time_in.getText(), DateTimeFormatter.ofPattern("hh:mm a"));
+		     LocalTime out = LocalTime.parse(time_out.getText(), DateTimeFormatter.ofPattern("hh:mm a"));
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
@@ -597,10 +602,9 @@ public class DTR {
 	public void saveConsultationTable() {
 		Connection con = connect();
 		try{
-			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText());
-		     LocalTime out = LocalTime.parse(time_out.getText());
+			 LocalTime in = LocalTime.parse(time_in.getText(), DateTimeFormatter.ofPattern("hh:mm a"));
+		     LocalTime out = LocalTime.parse(time_out.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
@@ -633,10 +637,9 @@ public class DTR {
 	public void saveRelativeActivityTable() {
 		Connection con = connect();
 		try{
-			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText());
-		     LocalTime out = LocalTime.parse(time_out.getText());
+			 LocalTime in = LocalTime.parse(time_in.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
+		     LocalTime out = LocalTime.parse(time_out.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
@@ -671,8 +674,8 @@ public class DTR {
 		try{
 			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText());
-		     LocalTime out = LocalTime.parse(time_out.getText());
+			 LocalTime in = LocalTime.parse(time_in.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
+		     LocalTime out = LocalTime.parse(time_out.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
