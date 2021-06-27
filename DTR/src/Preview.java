@@ -15,9 +15,6 @@ import javax.swing.text.StyleConstants.ColorConstants;
 
 import com.itextpdf.text.BaseColor;
 
-//import com.itextpdf.text.BaseColor;
-//import com.itextpdf.text.Font;
-
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -47,6 +44,7 @@ public class Preview {
 	private static JTable relatedTable;
 	private static JTable othersTable;
 	private static JTable totalHrsTable;
+	private static JLabel nameView;
 	
 
 	public static void main(String[] args) {
@@ -171,8 +169,10 @@ public class Preview {
 						document.add(new Paragraph(employee_rs.getString("department")));
 					}
 					
-					document.add(new Paragraph("\n"));
-					document.add(new Paragraph("Class"));
+					document.add(new Paragraph("\n"));					
+					Paragraph _class = new Paragraph("Class");
+					_class.setAlignment(Element.ALIGN_CENTER);
+					document.add(_class);
 					document.add(new Paragraph("\n"));
 					
 					String classQ = "select * from class";
@@ -193,9 +193,11 @@ public class Preview {
 						tbl.addCell(class_rs.getString("hrs"));
 					}
 					document.add(tbl);
-					document.add(new Paragraph("\n"));
 					
-					document.add(new Paragraph("Consultation"));
+					document.add(new Paragraph("\n"));
+					Paragraph _consultation = new Paragraph("Consultation");
+					_consultation.setAlignment(Element.ALIGN_CENTER);
+					document.add(_consultation);
 					document.add(new Paragraph("\n"));
 					
 					String consultationQ = "select * from consultation";
@@ -216,9 +218,11 @@ public class Preview {
 						consult_tbl.addCell(consultation_rs.getString("hrs"));
 					}
 					document.add(consult_tbl);
+					
 					document.add(new Paragraph("\n"));
-
-					document.add(new Paragraph("Related"));
+					Paragraph _related = new Paragraph("Related Activities");
+					_related.setAlignment(Element.ALIGN_CENTER);
+					document.add(_related);				
 					document.add(new Paragraph("\n"));
 					
 					String relatedQ = "select * from related";
@@ -239,9 +243,11 @@ public class Preview {
 						related_tbl.addCell(related_rs.getString("hrs"));
 					}
 					document.add(related_tbl);
-					document.add(new Paragraph("\n"));
 					
-					document.add(new Paragraph("Others"));
+					document.add(new Paragraph("\n"));
+					Paragraph _others = new Paragraph("Others");
+					_others.setAlignment(Element.ALIGN_CENTER);
+					document.add(_others);							
 					document.add(new Paragraph("\n"));
 					
 					String othersQ = "select * from others";
@@ -262,8 +268,8 @@ public class Preview {
 						others_tbl.addCell(others_rs.getString("hrs"));
 					}
 					document.add(others_tbl);
+					
 					document.add(new Paragraph("\n"));
-
 					document.close();
 					
 				}catch(Exception err) {
@@ -287,15 +293,15 @@ public class Preview {
 		btnExit.setBounds(780, 561, 195, 57);
 		frame.getContentPane().add(btnExit);
 		
-		JLabel lblNewLabel = new JLabel("Name: ");
-		lblNewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		lblNewLabel.setBounds(10, 182, 41, 21);
-		frame.getContentPane().add(lblNewLabel);
+		JLabel nameViewLabel = new JLabel("Name: ");
+		nameViewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+		nameViewLabel.setBounds(10, 182, 41, 21);
+		frame.getContentPane().add(nameViewLabel);
 		
-		JLabel lblDepartment = new JLabel("Department: ");
-		lblDepartment.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		lblDepartment.setBounds(582, 182, 87, 21);
-		frame.getContentPane().add(lblDepartment);
+		JLabel deptViewLabel = new JLabel("Department: ");
+		deptViewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+		deptViewLabel.setBounds(582, 182, 87, 21);
+		frame.getContentPane().add(deptViewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Republic of the Philippines");
 		lblNewLabel_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
@@ -326,6 +332,16 @@ public class Preview {
 		lblNewLabel_1_1_1_1_2.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
 		lblNewLabel_1_1_1_1_2.setBounds(425, 120, 111, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_2);
+		
+		nameView = new JLabel("nameValue");
+		nameView.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+		nameView.setBounds(61, 182, 201, 21);
+		frame.getContentPane().add(nameView);
+		
+		JLabel lblDeptvalue = new JLabel("deptValue");
+		lblDeptvalue.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+		lblDeptvalue.setBounds(665, 182, 201, 21);
+		frame.getContentPane().add(lblDeptvalue);
 		frame.setVisible(true);
 	}
 	
@@ -544,11 +560,42 @@ public class Preview {
 			String deleteOthers = "truncate others";
 			PreparedStatement ps_others = con.prepareStatement(deleteOthers);
 			ps_others.execute();
+			
+			String deleteEmployee = "truncate employee";
+			PreparedStatement ps_employee = con.prepareStatement(deleteEmployee);
+			ps_employee.execute();
 			con.close();
+			
+			
 			
 		}catch(Exception err) {
 			System.out.print("error: " + err);
 		}
 	}
+	
+//	public void empDetails() {
+//		
+//		Connection con = connect();
+//		DefaultTableModel model = new DefaultTableModel();
+//
+//		try {
+//			String query = "select name, department from employee";
+//			Statement st  = con.createStatement();
+//			ResultSet rs = st.executeQuery(query);
+//			
+//			while(rs.next()) {
+//				model.addRow(new Object[] {
+//						nameView.setString(rs.getString("name")),
+//						rs.getString("time_out"),
+//						rs.getString("hrs"),
+//				});
+//			}
+//				rs.close();
+//				st.close();
+//			
+//		}catch(Exception err) {
+//			System.out.print("error: " + err);
+//		}
+//	}
 }
 
