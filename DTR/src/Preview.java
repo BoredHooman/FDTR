@@ -20,6 +20,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Table;
+import com.lowagie.text.Watermark;
 import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -34,7 +35,6 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
-//import java.awt.Font;
 
 
 public class Preview {
@@ -46,7 +46,6 @@ public class Preview {
 	private static JTable totalHrsTable;
 	private static JLabel nameView;
 	
-
 	public static void main(String[] args) {
 		showWindow();
 		showClass();
@@ -105,11 +104,9 @@ public class Preview {
 		
 		totalHrsTable = new JTable();
 		totalHrsTable.setBackground(new Color(245, 245, 220));
-//		totalHrsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneTotalHrs.setViewportView(totalHrsTable);
 		
 		JButton btnNewButton = new JButton("Generate PDF");
-//		btnNewButton.setFont(new Font("Bell MT", Font.BOLD, 17));
 		btnNewButton.setForeground(Color.WHITE);
 		btnNewButton.setBackground(new Color(135, 206, 235));
 		btnNewButton.addActionListener(new ActionListener() {
@@ -151,24 +148,24 @@ public class Preview {
 					Paragraph fdtr = new Paragraph("FACULTY DAILY TIME RECORD", f);
 					fdtr.setAlignment(Element.ALIGN_CENTER);
 					document.add(fdtr);
-					
-					Paragraph monYear = new Paragraph("For the month of");
-					monYear.setAlignment(Element.ALIGN_CENTER);
-					document.add(monYear);
-					
-					document.add(new Paragraph("\n"));
-
-					
+						
 					String employeeQuery = "select * from employee";
 					Statement employee_st  = con.createStatement();
 					ResultSet employee_rs = employee_st.executeQuery(employeeQuery);
 					
 					while(employee_rs.next()) {
-						document.add(new Paragraph(employee_rs.getString("id_number")));
-						document.add(new Paragraph(employee_rs.getString("name")));
-						document.add(new Paragraph(employee_rs.getString("department")));
+						
+						Paragraph monYear = new Paragraph("For the month of " + employee_rs.getString("month")
+						+ " " + employee_rs.getString("year"));
+						monYear.setAlignment(Element.ALIGN_CENTER);
+						document.add(monYear);
+						
+						document.add(new Paragraph("\n"));
+						document.add(new Paragraph("\n"));
+
+						document.add(new Paragraph("                " + "NAME: " + employee_rs.getString("name") +"                               "
+								+"                  "+ "DEPARTMENT: "  + employee_rs.getString("department")));
 					}
-					
 					document.add(new Paragraph("\n"));					
 					Paragraph _class = new Paragraph("Class");
 					_class.setAlignment(Element.ALIGN_CENTER);
@@ -270,8 +267,23 @@ public class Preview {
 					document.add(others_tbl);
 					
 					document.add(new Paragraph("\n"));
-					document.close();
+					document.add(new Paragraph("\n"));
+					document.add(new Paragraph("\n"));
+					document.add(new Paragraph("\n"));
+					document.add(new Paragraph("\n"));
+					document.add(new Paragraph("\n"));
+
+					String deptHeadQuery = "select * from employee";
+					Statement  deptHead_st  = con.createStatement();
+					ResultSet  deptHead_rs = deptHead_st.executeQuery(deptHeadQuery);
 					
+					while(deptHead_rs.next()) {
+						document.add(new Paragraph("                " + "-----------------------------------------"));
+						document.add(new Paragraph("                " + deptHead_rs.getString("department_head")));
+						document.add(new Paragraph("                " + "Department Head"));
+					}
+					document.close();
+
 				}catch(Exception err) {
 					System.out.print("Error: " + err);
 				}
@@ -288,7 +300,6 @@ public class Preview {
 			}
 		});
 		btnExit.setForeground(Color.WHITE);
-//		btnExit.setFont(new Font("Bell MT", Font.BOLD, 17));
 		btnExit.setBackground(new Color(255, 0, 0));
 		btnExit.setBounds(780, 623, 195, 57);
 		frame.getContentPane().add(btnExit);
@@ -392,7 +403,6 @@ public class Preview {
 		model.addColumn("Out");
 		model.addColumn("Hrs");
 		
-		
 		try {
 			String querry = "select * from class";
 			Statement st  = con.createStatement();
@@ -409,21 +419,16 @@ public class Preview {
 				rs.close();
 				st.close();
 			
-//				DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-//				centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-//				classTable.getColumnModel().getColumn(0).setCellRenderer( centerRenderer );
 				classTable.setModel(model);
 				classTable.setAutoResizeMode(0);
 				classTable.getColumnModel().getColumn(0).setPreferredWidth(52);
 				classTable.getColumnModel().getColumn(1).setPreferredWidth(52);
 				classTable.getColumnModel().getColumn(2).setPreferredWidth(52);
 				classTable.getColumnModel().getColumn(3).setPreferredWidth(52);
-
-
+				
 		}catch(Exception err) {
 			System.out.print("error: " + err);
 		}
-		
 	}
 	
 	public static void showConsultation() {
@@ -502,9 +507,6 @@ public class Preview {
 		model.addColumn("Out");
 		model.addColumn("Hrs");
 		  Paragraph header = new Paragraph("Copy");
-//	                .setFont(PopupFactory.getSharedInstance())
-//	                .setFontSize(14)
-//	                .setFontColor(ColorConstants.ALIGN_JUSTIFIED);
 		
 		try {
 			String query = "select * from others";
@@ -537,34 +539,29 @@ public class Preview {
 		DefaultTableModel model = new DefaultTableModel();
 		model.addColumn("Total Hrs");
 		
-//		try {
-//			String querry = "select * from class";
-//			Statement st  = con.createStatement();
-//			ResultSet rs = st.executeQuery(querry);
-//			
-//			while(rs.next()) {
-//				model.addRow(new Object[] {
-//						rs.getString("id"),
-//						rs.getString("time_in"),
-//						rs.getString("time_out"),
-//						rs.getString("hrs"),
-//				});
-//			}
-//				rs.close();
-//				st.close();
-//			
+		try {
+			String querry = "select * from class";
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(querry);
+			
+			while(rs.next()) {
+				model.addRow(new Object[] {
+						rs.getString("hrs"),
+				});
+			}
+				rs.close();
+				st.close();
+			
 				totalHrsTable.setModel(model);
-//				totalHrsTable.setAutoResizeMode(0);
-//				totalHrsTable.getColumnModel().getColumn(0).setPreferredWidth(52);
-//				totalHrsTable.getColumnModel().getColumn(1).setPreferredWidth(52);
-//				totalHrsTable.getColumnModel().getColumn(2).setPreferredWidth(52);
-//				totalHrsTable.getColumnModel().getColumn(3).setPreferredWidth(52);
-//
-//
-//		}catch(Exception err) {
-//			System.out.print("error: " + err);
-//		}
-		
+				totalHrsTable.setAutoResizeMode(0);
+				totalHrsTable.getColumnModel().getColumn(0).setPreferredWidth(52);
+				totalHrsTable.getColumnModel().getColumn(1).setPreferredWidth(52);
+				totalHrsTable.getColumnModel().getColumn(2).setPreferredWidth(52);
+				totalHrsTable.getColumnModel().getColumn(3).setPreferredWidth(52);
+
+		}catch(Exception err) {
+			System.out.print("error: " + err);
+		}
 	}
 	
 	public static void deleteAllData() {
@@ -590,37 +587,37 @@ public class Preview {
 			PreparedStatement ps_employee = con.prepareStatement(deleteEmployee);
 			ps_employee.execute();
 			con.close();
-			
-			
-			
+
 		}catch(Exception err) {
 			System.out.print("error: " + err);
 		}
 	}
 	
-//	public void empDetails() {
-//		
-//		Connection con = connect();
-//		DefaultTableModel model = new DefaultTableModel();
-//
-//		try {
-//			String query = "select name, department from employee";
-//			Statement st  = con.createStatement();
-//			ResultSet rs = st.executeQuery(query);
-//			
-//			while(rs.next()) {
-//				model.addRow(new Object[] {
-//						nameView.setString(rs.getString("name")),
-//						rs.getString("time_out"),
-//						rs.getString("hrs"),
-//				});
-//			}
-//				rs.close();
-//				st.close();
-//			
-//		}catch(Exception err) {
-//			System.out.print("error: " + err);
-//		}
-//	}
+	public void empDetails() {
+		
+		Connection con = connect();
+		DefaultTableModel model = new DefaultTableModel();
+
+		try {
+			String query = "select * from employee";
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			
+			if(rs.next()) {
+				model.addRow(new Object[] {
+						rs.getString("id_number"),
+						rs.getString("name"),
+						rs.getString("department"),
+						rs.getString("department_head"),
+
+				});
+			}
+				rs.close();
+				st.close();
+				con.close();
+		}catch(Exception err) {
+			System.out.print("error: " + err);
+		}
+	}
 }
 

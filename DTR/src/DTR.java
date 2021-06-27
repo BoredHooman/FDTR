@@ -13,6 +13,8 @@ import java.awt.Image;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+
 import javax.swing.JTextField;
 import javax.print.attribute.standard.DocumentName;
 import javax.swing.ImageIcon;
@@ -28,6 +30,7 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
 import javax.swing.JMenuItem;
@@ -78,6 +81,8 @@ public class DTR {
 	private Object[] row = new Object[4];
 	private JTextArea holiday;
 	private JLabel dayyys;
+	private JMonthChooser month;
+	private JYearChooser year;
 
 	
 	/**
@@ -373,7 +378,7 @@ public class DTR {
 			public void actionPerformed(ActionEvent e) {
 				String selectedTypes = types.getSelectedItem().toString();
 				String selectedDays = days.getSelectedItem().toString();
-				saveTotalHrs();
+//				saveTotalHrs();
 				if(selectedTypes == "class") {
 					saveClassTbl();
 				}else if(selectedTypes == "consultation") {
@@ -426,13 +431,13 @@ public class DTR {
 		lblDay.setBounds(523, 185, 56, 15);
 		frame.getContentPane().add(lblDay);
 		
-		JMonthChooser monthChooser = new JMonthChooser();
-		monthChooser.setBounds(451, 145, 140, 24);
-		frame.getContentPane().add(monthChooser);
+		month = new JMonthChooser();
+		month.setBounds(451, 145, 140, 24);
+		frame.getContentPane().add(month);
 		
-		JYearChooser yearChooser = new JYearChooser();
-		yearChooser.setBounds(583, 145, 70, 24);
-		frame.getContentPane().add(yearChooser);
+		year = new JYearChooser();
+		year.setBounds(583, 145, 70, 24);
+		frame.getContentPane().add(year);
 		
 		JLabel lblTimeIn = new JLabel("Time In");
 		lblTimeIn.setForeground(new Color(0, 51, 51));
@@ -496,7 +501,6 @@ public class DTR {
 				preview.showOthers();
 				preview.showTotalHrs();
 				saveEmployeeDetails();
-
 			}
 		});
 		preview.setBounds(598, 353, 113, 32);
@@ -548,13 +552,20 @@ public class DTR {
 	public void saveEmployeeDetails() {
 		
 		Connection con = connect();
-		try{
-			String query = "insert into employee (id_number, name, department, department_head) values(?,?,?,?)";
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("MMMM");
+			String months = sdf.format(new Date());
+			SimpleDateFormat sdf_year = new SimpleDateFormat("YYYY");
+			String years = sdf_year.format(new Date());
+		    
+			String query = "insert into employee (id_number, name, department, department_head, month, year) values(?,?,?,?,?,?)";
 			PreparedStatement ps = con.prepareStatement(query);
 			ps.setString(1, id_number.getText());
 			ps.setString(2, name.getText());
 			ps.setString(3, department.getText());
 			ps.setString(4, department_head.getText());
+			ps.setString(5, months);
+			ps.setString(6, years);
 
 			ps.execute();
 
@@ -673,7 +684,6 @@ public class DTR {
 	public void saveOthersTable() {
 		Connection con = connect();
 		try{
-			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyyMMdd");
 			 String hrs = null;
 			 LocalTime in = LocalTime.parse(time_in.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
 		     LocalTime out = LocalTime.parse(time_out.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
@@ -706,56 +716,56 @@ public class DTR {
 		}
 	}
 	
-	public void saveTotalHrs() {
-		
-		Connection con = connect();
-		DefaultTableModel model = new DefaultTableModel();
-
-		try{
-			String selectQuery = "select hrs from class";
-			Statement st  = con.createStatement();
-			ResultSet rs = st.executeQuery(selectQuery);
-			
-			while(rs.next()) {
-//				model.addRow(new Object[] {
-						rs.getString("hrs");
-//						System.out.print(rs.getString("hrs"));
-//				});
-			}
-				rs.close();
-				st.close();
-			
-			
-			
-			
-			
-			
-			
-			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText());
-		     LocalTime out = LocalTime.parse(time_out.getText());
-		     int hoursDiff = (out.getHour() - in.getHour()),
-		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
-		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
-		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
-		     
-			if(holiday.getText().equals("")) {
-				
-//			    System.out.print(hrs);
-
-				String query = "insert into total_hrs (total_hours) values(?)";
-				PreparedStatement ps = con.prepareStatement(query);
-				ps.setString(1, time_in.getText());
-				ps.execute();
-			}else {
-				String query = "update total_hrs set total_hours = ? where id = ?";
-				PreparedStatement ps = con.prepareStatement(query);
-				ps.setString(1, "HOLIDAY");
-				ps.setString(4, holiday.getText());
-				ps.execute();
-			}
-		}catch(Exception err) {
-			System.out.print("error : " + err);
-		}
-	}
+//	public void saveTotalHrs() {
+//		
+//		Connection con = connect();
+//		DefaultTableModel model = new DefaultTableModel();
+//
+//		try{
+//			String selectQuery = "select hrs from class";
+//			Statement st  = con.createStatement();
+//			ResultSet rs = st.executeQuery(selectQuery);
+//			
+//			while(rs.next()) {
+////				model.addRow(new Object[] {
+//						rs.getString("hrs");
+////						System.out.print(rs.getString("hrs"));
+////				});
+//			}
+//				rs.close();
+//				st.close();
+//			
+//			
+//			
+//			
+//			
+//			
+//			
+//			 String hrs = null;
+//			 LocalTime in = LocalTime.parse(time_in.getText());
+//		     LocalTime out = LocalTime.parse(time_out.getText());
+//		     int hoursDiff = (out.getHour() - in.getHour()),
+//		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
+//		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
+//		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
+//		     
+//			if(holiday.getText().equals("")) {
+//				
+////			    System.out.print(hrs);
+//
+//				String query = "insert into total_hrs (total_hours) values(?)";
+//				PreparedStatement ps = con.prepareStatement(query);
+//				ps.setString(1, time_in.getText());
+//				ps.execute();
+//			}else {
+//				String query = "update total_hrs set total_hours = ? where id = ?";
+//				PreparedStatement ps = con.prepareStatement(query);
+//				ps.setString(1, "HOLIDAY");
+//				ps.setString(4, holiday.getText());
+//				ps.execute();
+//			}
+//		}catch(Exception err) {
+//			System.out.print("error : " + err);
+//		}
+//	}
 }
