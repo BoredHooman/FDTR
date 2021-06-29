@@ -52,7 +52,7 @@ public class Preview {
 		showConsultation();
 		showRelated();
 		showOthers();
-		showTotalHrs();
+//		showTotalHrs();
 	}
 	
 	public static void showWindow() {
@@ -304,15 +304,15 @@ public class Preview {
 		btnExit.setBounds(780, 623, 195, 57);
 		frame.getContentPane().add(btnExit);
 		
-		JLabel nameViewLabel = new JLabel("Name: ");
-		nameViewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		nameViewLabel.setBounds(10, 182, 41, 21);
-		frame.getContentPane().add(nameViewLabel);
-		
-		JLabel deptViewLabel = new JLabel("Department: ");
-		deptViewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		deptViewLabel.setBounds(582, 182, 87, 21);
-		frame.getContentPane().add(deptViewLabel);
+//		JLabel nameViewLabel = new JLabel("Name: ");
+//		nameViewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+//		nameViewLabel.setBounds(10, 182, 41, 21);
+//		frame.getContentPane().add(nameViewLabel);
+//		
+//		JLabel deptViewLabel = new JLabel("Department: ");
+//		deptViewLabel.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+//		deptViewLabel.setBounds(582, 182, 87, 21);
+//		frame.getContentPane().add(deptViewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Republic of the Philippines");
 		lblNewLabel_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
@@ -344,16 +344,16 @@ public class Preview {
 		lblNewLabel_1_1_1_1_2.setBounds(425, 120, 111, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_2);
 		
-		nameView = new JLabel("nameValue");
-		nameView.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		nameView.setBounds(61, 182, 201, 21);
-		frame.getContentPane().add(nameView);
+//		nameView = new JLabel("nameValue");
+//		nameView.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+//		nameView.setBounds(61, 182, 201, 21);
+//		frame.getContentPane().add(nameView);
 		
-		JLabel lblDeptvalue = new JLabel("deptValue");
-		lblDeptvalue.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
-		lblDeptvalue.setBounds(665, 182, 201, 21);
-		frame.getContentPane().add(lblDeptvalue);
-		
+//		JLabel lblDeptvalue = new JLabel("deptValue");
+//		lblDeptvalue.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
+//		lblDeptvalue.setBounds(665, 182, 201, 21);
+//		frame.getContentPane().add(lblDeptvalue);
+//		
 		JLabel lblNewLabel_1_1_1_1_1_1 = new JLabel("Class");
 		lblNewLabel_1_1_1_1_1_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
 		lblNewLabel_1_1_1_1_1_1.setBounds(86, 245, 48, 21);
