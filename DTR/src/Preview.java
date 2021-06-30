@@ -412,15 +412,6 @@ public class Preview {
 		lblNewLabel_1_1_1_1_1_1_3.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
 		lblNewLabel_1_1_1_1_1_1_3.setBounds(752, 186, 73, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1_3);
-		
-//		JLabel lblNewLabel_1_1_1_1_1_1_4 = new JLabel("Hours");
-//		lblNewLabel_1_1_1_1_1_1_4.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
-//		lblNewLabel_1_1_1_1_1_1_4.setBounds(914, 186, 48, 21);
-//		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1_4);
-		
-		JLabel total_class = new JLabel("0");
-		total_class.setBounds(88, 555, 46, 14);
-		frame.getContentPane().add(total_class);
 		frame.setVisible(true);
 	}
 	
