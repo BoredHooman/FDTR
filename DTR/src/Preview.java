@@ -2,7 +2,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -45,6 +48,7 @@ public class Preview {
 	private static JTable othersTable;
 	private static JTable totalHrsTable;
 	private static JLabel nameView;
+	private static int class_hour;
 	
 	public static void main(String[] args) {
 		showWindow();
@@ -52,19 +56,19 @@ public class Preview {
 		showConsultation();
 		showRelated();
 		showOthers();
-//		showTotalHrs();
+		totalConsultationHrs();
 	}
 	
 	public static void showWindow() {
 		JFrame frame = new JFrame("Preview");
 		frame.getContentPane().setBackground(new Color(230, 230, 250));
-		frame.setBounds(200, 100, 1000,730);
+		frame.setBounds(200, 100, 920,690);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		frame.setDefaultCloseOperation(0);
 		
 		JScrollPane scrollPaneClass = new JScrollPane();
-		scrollPaneClass.setBounds(10, 289, 213, 300);
+		scrollPaneClass.setBounds(10, 230, 213, 300);
 		frame.getContentPane().add(scrollPaneClass);
 		
 		classTable = new JTable();
@@ -72,7 +76,7 @@ public class Preview {
 		scrollPaneClass.setViewportView(classTable);
 		
 		JScrollPane scrollPaneConsultation = new JScrollPane();
-		scrollPaneConsultation.setBounds(233, 289, 213, 300);
+		scrollPaneConsultation.setBounds(233, 230, 213, 300);
 		frame.getContentPane().add(scrollPaneConsultation);
 		
 		consultationTable = new JTable();
@@ -81,7 +85,7 @@ public class Preview {
 		scrollPaneConsultation.setViewportView(consultationTable);
 		
 		JScrollPane scrollPaneRelated = new JScrollPane();
-		scrollPaneRelated.setBounds(456, 289, 213, 300);
+		scrollPaneRelated.setBounds(456, 230, 213, 300);
 		frame.getContentPane().add(scrollPaneRelated);
 		
 		relatedTable = new JTable();
@@ -90,7 +94,7 @@ public class Preview {
 		scrollPaneRelated.setViewportView(relatedTable);
 		
 		JScrollPane scrollPaneOthers = new JScrollPane();
-		scrollPaneOthers.setBounds(679, 289, 213, 300);
+		scrollPaneOthers.setBounds(679, 230, 213, 300);
 		frame.getContentPane().add(scrollPaneOthers);
 		
 		othersTable = new JTable();
@@ -98,13 +102,13 @@ public class Preview {
 		othersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		scrollPaneOthers.setViewportView(othersTable);
 		
-		JScrollPane scrollPaneTotalHrs = new JScrollPane();
-		scrollPaneTotalHrs.setBounds(902, 289, 73, 300);
-		frame.getContentPane().add(scrollPaneTotalHrs);
+//		JScrollPane scrollPaneTotalHrs = new JScrollPane();
+//		scrollPaneTotalHrs.setBounds(902, 230, 73, 300);
+//		frame.getContentPane().add(scrollPaneTotalHrs);
 		
-		totalHrsTable = new JTable();
-		totalHrsTable.setBackground(new Color(245, 245, 220));
-		scrollPaneTotalHrs.setViewportView(totalHrsTable);
+//		totalHrsTable = new JTable();
+//		totalHrsTable.setBackground(new Color(245, 245, 220));
+//		scrollPaneTotalHrs.setViewportView(totalHrsTable);
 		
 		JButton btnNewButton = new JButton("Generate PDF");
 		btnNewButton.setForeground(Color.WHITE);
@@ -161,15 +165,22 @@ public class Preview {
 						document.add(monYear);
 						
 						document.add(new Paragraph("\n"));
-						document.add(new Paragraph("\n"));
 
-						document.add(new Paragraph("                " + "NAME: " + employee_rs.getString("name") +"                               "
-								+"                  "+ "DEPARTMENT: "  + employee_rs.getString("department")));
+						document.add(new Paragraph("                " + "Name: " + employee_rs.getString("name") +"                               "
+								+"                  "+ "Department: "  + employee_rs.getString("department")));
 					}
 					document.add(new Paragraph("\n"));					
-					Paragraph _class = new Paragraph("Class");
-					_class.setAlignment(Element.ALIGN_CENTER);
-					document.add(_class);
+					String query_class_sum = "select sum(hrs) from class";
+					Statement st_class_sum  = con.createStatement();
+					ResultSet rs_class_sum = st_class_sum.executeQuery(query_class_sum);
+					while(rs_class_sum.next()) {
+						document.add(new Paragraph("\n"));
+						Paragraph _class = new Paragraph("Class " + "total hrs: " + rs_class_sum.getString("sum(hrs)"));
+						_class.setAlignment(Element.ALIGN_CENTER);
+						document.add(_class);	
+					}
+					rs_class_sum.close();
+					st_class_sum.close();
 					document.add(new Paragraph("\n"));
 					
 					String classQ = "select * from class";
@@ -192,9 +203,20 @@ public class Preview {
 					document.add(tbl);
 					
 					document.add(new Paragraph("\n"));
-					Paragraph _consultation = new Paragraph("Consultation");
-					_consultation.setAlignment(Element.ALIGN_CENTER);
-					document.add(_consultation);
+					String query_consultation_sum = "select sum(hrs) from consultation";
+					Statement st_consultation_sum  = con.createStatement();
+					ResultSet rs_consultation_sum = st_consultation_sum.executeQuery(query_consultation_sum);
+					while(rs_consultation_sum.next()) {
+						document.add(new Paragraph("\n"));
+						Paragraph _consultation = new Paragraph("Consultation " + "total hrs: " + rs_consultation_sum.getString("sum(hrs)"));
+						_consultation.setAlignment(Element.ALIGN_CENTER);
+						document.add(_consultation);	
+					}
+					rs_consultation_sum.close();
+					st_consultation_sum.close();
+//					Paragraph _consultation = new Paragraph("Consultation");
+//					_consultation.setAlignment(Element.ALIGN_CENTER);
+//					document.add(_consultation);
 					document.add(new Paragraph("\n"));
 					
 					String consultationQ = "select * from consultation";
@@ -216,10 +238,18 @@ public class Preview {
 					}
 					document.add(consult_tbl);
 					
-					document.add(new Paragraph("\n"));
-					Paragraph _related = new Paragraph("Related Activities");
-					_related.setAlignment(Element.ALIGN_CENTER);
-					document.add(_related);				
+					String query_related_sum = "select sum(hrs) from related";
+					Statement st_related_sum  = con.createStatement();
+					ResultSet rs_related_sum = st_related_sum.executeQuery(query_related_sum);
+					while(rs_related_sum.next()) {
+						document.add(new Paragraph("\n"));
+						Paragraph _related = new Paragraph("Related Activities " + "total hrs: " + rs_related_sum.getString("sum(hrs)"));
+						_related.setAlignment(Element.ALIGN_CENTER);
+						document.add(_related);	
+					}
+					rs_related_sum.close();
+					st_related_sum.close();
+								
 					document.add(new Paragraph("\n"));
 					
 					String relatedQ = "select * from related";
@@ -239,14 +269,20 @@ public class Preview {
 						related_tbl.addCell(related_rs.getString("time_out"));
 						related_tbl.addCell(related_rs.getString("hrs"));
 					}
-					document.add(related_tbl);
+					document.add(related_tbl);				
 					
+					String query_other_sum = "select sum(hrs) from others";
+					Statement st_others_sum  = con.createStatement();
+					ResultSet rs_other_sum = st_others_sum.executeQuery(query_other_sum);
+					while(rs_other_sum.next()) {
+						document.add(new Paragraph("\n"));
+						Paragraph _others = new Paragraph("Others " + "total hrs: " + rs_other_sum.getString("sum(hrs)"));
+						_others.setAlignment(Element.ALIGN_CENTER);
+						document.add(_others);	
+					}
+					rs_other_sum.close();
+					rs_other_sum.close();
 					document.add(new Paragraph("\n"));
-					Paragraph _others = new Paragraph("Others");
-					_others.setAlignment(Element.ALIGN_CENTER);
-					document.add(_others);							
-					document.add(new Paragraph("\n"));
-					
 					String othersQ = "select * from others";
 					Statement others_st  = con.createStatement();
 					ResultSet others_rs = class_st.executeQuery(othersQ);
@@ -269,10 +305,7 @@ public class Preview {
 					document.add(new Paragraph("\n"));
 					document.add(new Paragraph("\n"));
 					document.add(new Paragraph("\n"));
-					document.add(new Paragraph("\n"));
-					document.add(new Paragraph("\n"));
-					document.add(new Paragraph("\n"));
-
+					
 					String deptHeadQuery = "select * from employee";
 					Statement  deptHead_st  = con.createStatement();
 					ResultSet  deptHead_rs = deptHead_st.executeQuery(deptHeadQuery);
@@ -289,19 +322,25 @@ public class Preview {
 				}
 			}
 		});
-		btnNewButton.setBounds(569, 623, 195, 57);
+		btnNewButton.setBounds(488, 570, 195, 57);
 		frame.getContentPane().add(btnNewButton);
 		
 		JButton btnExit = new JButton("EXIT");
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				totalRelatedHrs();
 				deleteAllData();
+				defaultValueClass();
+				defaultValueConsultation();
+				defaultValueRelated();
+				defaultValueOthers();
+				totalClassHrs();
 				frame.dispose();
 			}
 		});
 		btnExit.setForeground(Color.WHITE);
 		btnExit.setBackground(new Color(255, 0, 0));
-		btnExit.setBounds(780, 623, 195, 57);
+		btnExit.setBounds(699, 570, 195, 57);
 		frame.getContentPane().add(btnExit);
 		
 //		JLabel nameViewLabel = new JLabel("Name: ");
@@ -339,10 +378,10 @@ public class Preview {
 		lblNewLabel_1_1_1_1_1.setBounds(354, 99, 246, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_1);
 		
-		JLabel lblNewLabel_1_1_1_1_2 = new JLabel("For the month of");
-		lblNewLabel_1_1_1_1_2.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
-		lblNewLabel_1_1_1_1_2.setBounds(425, 120, 111, 21);
-		frame.getContentPane().add(lblNewLabel_1_1_1_1_2);
+//		JLabel lblNewLabel_1_1_1_1_2 = new JLabel("For the month of");
+//		lblNewLabel_1_1_1_1_2.setFont(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 14));
+//		lblNewLabel_1_1_1_1_2.setBounds(425, 120, 111, 21);
+//		frame.getContentPane().add(lblNewLabel_1_1_1_1_2);
 		
 //		nameView = new JLabel("nameValue");
 //		nameView.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 12));
@@ -356,28 +395,32 @@ public class Preview {
 //		
 		JLabel lblNewLabel_1_1_1_1_1_1 = new JLabel("Class");
 		lblNewLabel_1_1_1_1_1_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
-		lblNewLabel_1_1_1_1_1_1.setBounds(86, 245, 48, 21);
+		lblNewLabel_1_1_1_1_1_1.setBounds(86, 186, 48, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1);
 		
 		JLabel lblNewLabel_1_1_1_1_1_1_1 = new JLabel("Consultation");
 		lblNewLabel_1_1_1_1_1_1_1.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
-		lblNewLabel_1_1_1_1_1_1_1.setBounds(294, 245, 111, 21);
+		lblNewLabel_1_1_1_1_1_1_1.setBounds(294, 186, 111, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1_1);
 		
 		JLabel lblNewLabel_1_1_1_1_1_1_2 = new JLabel("Related Activities");
 		lblNewLabel_1_1_1_1_1_1_2.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
-		lblNewLabel_1_1_1_1_1_1_2.setBounds(496, 245, 160, 21);
+		lblNewLabel_1_1_1_1_1_1_2.setBounds(496, 186, 160, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1_2);
 		
 		JLabel lblNewLabel_1_1_1_1_1_1_3 = new JLabel("Others");
 		lblNewLabel_1_1_1_1_1_1_3.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
-		lblNewLabel_1_1_1_1_1_1_3.setBounds(752, 245, 73, 21);
+		lblNewLabel_1_1_1_1_1_1_3.setBounds(752, 186, 73, 21);
 		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1_3);
 		
-		JLabel lblNewLabel_1_1_1_1_1_1_4 = new JLabel("Hours");
-		lblNewLabel_1_1_1_1_1_1_4.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
-		lblNewLabel_1_1_1_1_1_1_4.setBounds(914, 245, 48, 21);
-		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1_4);
+//		JLabel lblNewLabel_1_1_1_1_1_1_4 = new JLabel("Hours");
+//		lblNewLabel_1_1_1_1_1_1_4.setFont(new java.awt.Font("Tahoma", java.awt.Font.BOLD, 15));
+//		lblNewLabel_1_1_1_1_1_1_4.setBounds(914, 186, 48, 21);
+//		frame.getContentPane().add(lblNewLabel_1_1_1_1_1_1_4);
+		
+		JLabel total_class = new JLabel("0");
+		total_class.setBounds(88, 555, 46, 14);
+		frame.getContentPane().add(total_class);
 		frame.setVisible(true);
 	}
 	
@@ -593,6 +636,79 @@ public class Preview {
 		}
 	}
 	
+	public static void defaultValueClass() {
+		Connection con = connect();
+		try {
+			for(int i = 0; i<15; i++) {
+				String query = "insert into class (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps;
+				ps = con.prepareStatement(query);
+				ps.setString(1, "");
+				ps.setString(2, "");
+				ps.setString(3, "");
+				ps.execute();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void defaultValueConsultation() {
+		Connection con = connect();
+		try {
+			for(int i = 0; i<15; i++) {
+				String query = "insert into consultation (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps;
+				ps = con.prepareStatement(query);
+				ps.setString(1, "");
+				ps.setString(2, "");
+				ps.setString(3, "");
+				ps.execute();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void defaultValueRelated() {
+		Connection con = connect();
+		try {
+			for(int i = 0; i<15; i++) {
+				String query = "insert into related (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps;
+				ps = con.prepareStatement(query);
+				ps.setString(1, "");
+				ps.setString(2, "");
+				ps.setString(3, "");
+				ps.execute();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void defaultValueOthers() {
+		Connection con = connect();
+		try {
+			for(int i = 0; i<15; i++) {
+				String query = "insert into others (time_in, time_out, hrs) values(?,?,?)";
+				PreparedStatement ps;
+				ps = con.prepareStatement(query);
+				ps.setString(1, "");
+				ps.setString(2, "");
+				ps.setString(3, "");
+				ps.execute();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void empDetails() {
 		
 		Connection con = connect();
@@ -609,7 +725,6 @@ public class Preview {
 						rs.getString("name"),
 						rs.getString("department"),
 						rs.getString("department_head"),
-
 				});
 			}
 				rs.close();
@@ -619,5 +734,95 @@ public class Preview {
 			System.out.print("error: " + err);
 		}
 	}
+	
+	public static void totalClassHrs() {
+		
+		Connection con = connect();
+		DefaultTableModel model = new DefaultTableModel();
+		
+		try {
+			String query = "select sum(hrs) from class";
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(query);
+		
+			if(rs.next()) {
+				rs.getString("sum(hrs)");
+				System.out.print(rs.getString("sum(hrs)"));
+			}
+				rs.close();
+				st.close();
+				con.close();
+			}catch(Exception err) {
+				System.out.print("error: " + err);
+		}
+	}
+	
+public static void totalRelatedHrs() {
+		
+		Connection con = connect();
+		DefaultTableModel model = new DefaultTableModel();
+		
+		try {
+			String query = "select sum(hrs) from related";
+
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			if(rs.next()) {
+				rs.getString("sum(hrs)");
+				System.out.print(rs.getString("sum(hrs)"));
+			}
+				rs.close();
+				st.close();
+				con.close();
+			}catch(Exception err) {
+				System.out.print("error: " + err);
+		}
+	}
+
+public static void totalOthersHrs() {
+	
+	Connection con = connect();
+	DefaultTableModel model = new DefaultTableModel();
+	
+		try {
+			String query = "select sum(hrs) from others";
+	
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			if(rs.next()) {
+				rs.getString("sum(hrs)");
+				System.out.print(rs.getString("sum(hrs)"));
+			}
+				rs.close();
+				st.close();
+				con.close();
+			}catch(Exception err) {
+				System.out.print("error: " + err);
+		}
+	}
+
+public static void totalConsultationHrs() {
+	
+	Connection con = connect();
+	DefaultTableModel model = new DefaultTableModel();
+		try {
+			String query = "select sum(hrs) from class union select sum(hrs) from related";
+	
+			Statement st  = con.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			if(rs.next()) {
+				String a = rs.getString("sum(hrs)");
+//				String b = rs.getString("sum(hrs)");
+
+			}
+				rs.close();
+				st.close();
+				con.close();
+			}catch(Exception err) {
+				System.out.print("error: " + err);
+		}
+	}
+
+
 }
 

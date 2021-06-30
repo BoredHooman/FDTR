@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -84,6 +85,7 @@ public class DTR {
 	private JLabel dayyys;
 	private JMonthChooser month;
 	private JYearChooser year;
+	private JTextArea id_type;
 
 	
 	/**
@@ -381,38 +383,23 @@ public class DTR {
 				String selectedDays = days.getSelectedItem().toString();
 				
 				Connection con = connect();
-
-				if(selectedDays == "Monday"){
-					try {
-						String query = "insert into consultation (time_in, time_out, hrs) values(?,?,?)";
-						PreparedStatement ps =  con.prepareStatement(query);
-						ps.setString(1, " ");
-						ps.setString(2, " ");
-						ps.setString(3, " ");
-						ps.execute();
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				
+				try {
+					String query_consultation = "select * from consultation";
+					Statement st  = con.createStatement();
+					ResultSet rs = st.executeQuery(query_consultation);
+					
+					while(rs.next()) {
+						if(rs.getString("id").isEmpty()) {
+							System.out.print("hello");
+						}
 					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 				
-				
-				
-//				if(!selectedTypes.contentEquals("class")) {
-//					try {
-//						String query = "insert into class (time_in, time_out, hrs) values(?,?,?)";
-//						PreparedStatement ps =  con.prepareStatement(query);
-//						ps.setString(1, "");
-//						ps.setString(2, "");
-//						ps.setString(3, "");
-//						ps.execute();
-//					} catch (Exception e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-//				}
-				
-//				saveTotalHrs();
+
 				if(selectedTypes == "class") {
 					saveClassTbl();
 				}else if(selectedTypes == "consultation") {
@@ -421,9 +408,7 @@ public class DTR {
 					saveRelativeActivityTable();
 				}else if(selectedTypes == "others") {
 					saveOthersTable();
-				}
-				
-				
+				}	
 				
 				// insert inputed data to the table
 				row[0] = selectedDays;
@@ -542,36 +527,10 @@ public class DTR {
 		preview.setBounds(598, 353, 113, 32);
 		frame.getContentPane().add(preview);
 		
-//		JDateChooser dateChooser_1 = new JDateChooser();
-//		dateChooser_1.getCalendarButton().addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//			
-//			}
-//		});
-//		dateChooser_1.setBounds(565, 381, 74, 20);
-//		frame.getContentPane().add(dateChooser_1);
-////		String date = dateChooser_1.getDate().toString();
-//		
-//		dayyys = new JLabel("New label");
-//		dayyys.setBounds(565, 426, 104, 14);
-//		frame.getContentPane().add(dayyys);
-//	
-////		dayyys.setText(date);
-//		
-//		JButton btnNewButton_1 = new JButton("New button");
-//		btnNewButton_1.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				 DateFormat fmt = new SimpleDateFormat("EEEE");
-//			        String date = fmt.format(dateChooser_1.getDate()); //jdatechooser
-//			        dayyys.setText(date);
-//			}
-//		});
-//		btnNewButton_1.setBounds(646, 381, 89, 23);
-//		frame.getContentPane().add(btnNewButton_1);
-//
+		id_type = new JTextArea();
+		id_type.setBounds(529, 271, 26, 27);
+		frame.getContentPane().add(id_type);
 	}
-	
-	
 	
 	static Connection connect() {
 		try {
@@ -625,17 +584,16 @@ public class DTR {
 				
 			    System.out.print(hrs);
 			    
-			    String query_consultation = "select * from class";
-				Statement st  = con.createStatement();
-				ResultSet rs = st.executeQuery(query_consultation);
-				String query = "insert into class (time_in, time_out, hrs) values(?,?,?)";
-//				String query = "update class set time_in = ?, time_out = ?, hrs = ? where id = 1";
+			    
+//				String query = "insert into class (time_in, time_out, hrs) values(?,?,?)";
+				String query = "update class set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
 				ps.setString(1, time_in.getText());
 				ps.setString(2, time_out.getText());
 				ps.setString(3, hrs.toString());
+				ps.setString(4, id_type.getText());
 				ps.execute();
-			}else {
+			}else{
 				String query = "update class set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
 				ps.setString(1, " --- ");
@@ -665,23 +623,15 @@ public class DTR {
 				
 			    System.out.print(hrs);
 			    
-				String query_consultation = "select * from consultation";
-				Statement st  = con.createStatement();
-				ResultSet rs = st.executeQuery(query_consultation);
-			
-
-				String query = "insert into consultation (time_in, time_out, hrs) values(?,?,?)";
-//				String query = "update consultation set time_in = ?, time_out = ?, hrs = ? where id = ?";
+//				String query = "insert into consultation (time_in, time_out, hrs) values(?,?,?)";
+				String query = "update consultation set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
 				ps.setString(1, time_in.getText());
 				ps.setString(2, time_out.getText());
 				ps.setString(3, hrs.toString());
-//				while(rs.next()) {
-//				ps.setString(4, rs.getString("id"));
-//
-//				}
-//					rs.close();
-//					st.close();
+				ps.setString(4, id_type.getText());
+
+
 				ps.execute();
 			}else {
 				String query = "update consultation set time_in = ?, time_out = ?, hrs = ? where id = ?";
@@ -712,11 +662,14 @@ public class DTR {
 				
 			    System.out.print(hrs);
 
-				String query = "insert into related (time_in, time_out, hrs) values(?,?,?)";
+//				String query = "insert into related (time_in, time_out, hrs) values(?,?,?)";
+				String query = "update related set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
 				ps.setString(1, time_in.getText());
 				ps.setString(2, time_out.getText());
 				ps.setString(3, hrs.toString());
+				ps.setString(4, id_type.getText());
+
 				ps.execute();
 			}else {
 				String query = "update related set time_in = ?, time_out = ?, hrs = ? where id = ?";
@@ -746,12 +699,14 @@ public class DTR {
 			if(holiday.getText().equals("")) {
 				
 			    System.out.print(hrs);
-
-				String query = "insert into others (time_in, time_out, hrs) values(?,?,?)";
+//			    String join = "select class.hrs, related.hrs, others.hrs, consultation.hrs";
+//				String query = "insert into others (time_in, time_out, hrs) values(?,?,?)";
+				String query = "update others set time_in = ?, time_out = ?, hrs = ? where id = ?";
 				PreparedStatement ps = con.prepareStatement(query);
 				ps.setString(1, time_in.getText());
 				ps.setString(2, time_out.getText());
 				ps.setString(3, hrs.toString());
+				ps.setString(4, id_type.getText());
 				ps.execute();
 			}else {
 				String query = "update others set time_in = ?, time_out = ?, hrs = ? where id = ?";
@@ -766,57 +721,4 @@ public class DTR {
 			System.out.print("error : " + err);
 		}
 	}
-	
-//	public void saveTotalHrs() {
-//		
-//		Connection con = connect();
-//		DefaultTableModel model = new DefaultTableModel();
-//
-//		try{
-//			String selectQuery = "select hrs from class";
-//			Statement st  = con.createStatement();
-//			ResultSet rs = st.executeQuery(selectQuery);
-//			
-//			while(rs.next()) {
-////				model.addRow(new Object[] {
-//						rs.getString("hrs");
-////						System.out.print(rs.getString("hrs"));
-////				});
-//			}
-//				rs.close();
-//				st.close();
-//			
-//			
-//			
-//			
-//			
-//			
-//			
-//			 String hrs = null;
-//			 LocalTime in = LocalTime.parse(time_in.getText());
-//		     LocalTime out = LocalTime.parse(time_out.getText());
-//		     int hoursDiff = (out.getHour() - in.getHour()),
-//		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
-//		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
-//		     hrs = hoursDiff+":"+minsDiff+":"+secsDiff;
-//		     
-//			if(holiday.getText().equals("")) {
-//				
-////			    System.out.print(hrs);
-//
-//				String query = "insert into total_hrs (total_hours) values(?)";
-//				PreparedStatement ps = con.prepareStatement(query);
-//				ps.setString(1, time_in.getText());
-//				ps.execute();
-//			}else {
-//				String query = "update total_hrs set total_hours = ? where id = ?";
-//				PreparedStatement ps = con.prepareStatement(query);
-//				ps.setString(1, "HOLIDAY");
-//				ps.setString(4, holiday.getText());
-//				ps.execute();
-//			}
-//		}catch(Exception err) {
-//			System.out.print("error : " + err);
-//		}
-//	}
 }
