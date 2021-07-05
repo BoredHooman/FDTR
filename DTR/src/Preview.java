@@ -219,6 +219,8 @@ public class Preview {
 //					document.add(_consultation);
 					document.add(new Paragraph("\n"));
 					
+					
+					
 					String consultationQ = "select * from consultation";
 					Statement consultation_st  = con.createStatement();
 					ResultSet consultation_rs = consultation_st.executeQuery(consultationQ);
@@ -308,18 +310,37 @@ public class Preview {
 					
 					String deptHeadQuery = "select * from employee";
 					Statement  deptHead_st  = con.createStatement();
-					ResultSet  deptHead_rs = deptHead_st.executeQuery(deptHeadQuery);
+				
+					ResultSet deptHead_rs = deptHead_st.executeQuery(deptHeadQuery);
 					
-					while(deptHead_rs.next()) {
-						document.add(new Paragraph("                " + "-----------------------------------------"));
-						document.add(new Paragraph("                " + deptHead_rs.getString("department_head")));
-						document.add(new Paragraph("                " + "Department Head"));
-					}
-					document.close();
-
-				}catch(Exception err) {
+						while(deptHead_rs.next()) {
+							
+							document.add(new Paragraph("This certifies upon my honor that the foregoing is a record for services"
+									+ " I rendered to MSU-Iligan Institute of Technology during the month of " + deptHead_rs.getString("month") + " " + deptHead_rs.getString("year")));
+							document.add(new Paragraph("\n"));
+							document.add(new Paragraph("\n"));
+							document.add(new Paragraph("______"+DTR.name.getText()+"______"));
+							document.add(new Paragraph("         (Signature over Printed Name)   "));
+							document.add(new Paragraph("                                                                                  Certified Correct: "));
+							document.add(new Paragraph("\n"));
+							document.add(new Paragraph("                                                                                  _____________________________"));
+							document.add(new Paragraph("                                                                                              "+ DTR.department_head.getText()));
+							document.add(new Paragraph("                                                                                           (Head of Department/Unit)"));
+							document.add(new Paragraph("_____________________________"));
+							document.add(new Paragraph("          (Designation)"));
+							
+						
+						}
+						
+						document.close();
+					
+					
+					
+				} catch(Exception err) {
 					System.out.print("Error: " + err);
 				}
+				
+				
 			}
 		});
 		btnNewButton.setBounds(488, 570, 195, 57);

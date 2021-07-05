@@ -55,11 +55,11 @@ public class DTR {
 	private JFrame frame;
 	private JLabel lblClock;
 	private JLabel fullName;
-	private JTextField name;
+	public static JTextField name;
 	private JLabel departmentLbl;
 	private JTextField department;
 	private JLabel headOfDepartment;
-	private JTextField department_head;
+	public static JTextField department_head;
 	private JDateChooser dateChooser;
 	private JTable table;
 	private JComboBox types;
@@ -83,8 +83,8 @@ public class DTR {
 	private Object[] time_sched = {"6:00 AM", ""};
 	private JTextArea holiday;
 	private JLabel dayyys;
-	private JMonthChooser month;
-	private JYearChooser year;
+	public static JMonthChooser month;
+	public static JYearChooser year;
 	private JTextArea id_type;
 
 	
@@ -503,6 +503,8 @@ public class DTR {
 					saveRelativeActivityTable();
 					saveOthersTable();
 //					saveTotalHrs();
+					holiday.setText("");
+					JOptionPane.showMessageDialog(null, "Holiday Successfully Added");
 			}
 		});
 		add_btn_1.setBounds(726, 145, 56, 27);
@@ -573,8 +575,11 @@ public class DTR {
 		Connection con = connect();
 		try{
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText(), DateTimeFormatter.ofPattern("hh:mm a"));
-		     LocalTime out = LocalTime.parse(time_out.getText(), DateTimeFormatter.ofPattern("hh:mm a"));
+			 String timeIn = time_in.getText();
+			 String timeOut = time_out.getText();
+			 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a").withLocale(Locale.ENGLISH);
+			 LocalTime in = LocalTime.parse(timeIn, formatter);
+		     LocalTime out = LocalTime.parse(timeOut, formatter);
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
@@ -612,8 +617,11 @@ public class DTR {
 		Connection con = connect();
 		try{
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText(), DateTimeFormatter.ofPattern("hh:mm a"));
-		     LocalTime out = LocalTime.parse(time_out.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
+			 String timeIn = time_in.getText();
+			 String timeOut = time_out.getText();
+			 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a").withLocale(Locale.ENGLISH);
+			 LocalTime in = LocalTime.parse(timeIn, formatter);
+		     LocalTime out = LocalTime.parse(timeOut, formatter);
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
@@ -651,8 +659,11 @@ public class DTR {
 		Connection con = connect();
 		try{
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
-		     LocalTime out = LocalTime.parse(time_out.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
+			 String timeIn = time_in.getText();
+			 String timeOut = time_out.getText();
+			 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a").withLocale(Locale.ENGLISH);
+			 LocalTime in = LocalTime.parse(timeIn, formatter);
+		     LocalTime out = LocalTime.parse(timeOut, formatter);
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
@@ -689,8 +700,11 @@ public class DTR {
 		Connection con = connect();
 		try{
 			 String hrs = null;
-			 LocalTime in = LocalTime.parse(time_in.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
-		     LocalTime out = LocalTime.parse(time_out.getText(),DateTimeFormatter.ofPattern("hh:mm a"));
+			 String timeIn = time_in.getText();
+			 String timeOut = time_out.getText();
+			 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a").withLocale(Locale.ENGLISH);
+			 LocalTime in = LocalTime.parse(timeIn, formatter);
+		     LocalTime out = LocalTime.parse(timeOut, formatter);
 		     int hoursDiff = (out.getHour() - in.getHour()),
 		         minsDiff  = (int)Math.abs(out.getMinute() - in.getMinute()),
 		         secsDiff  = (int)Math.abs(out.getSecond() - in.getSecond());
